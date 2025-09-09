@@ -3,17 +3,22 @@ import axios from 'axios'
 // Configuração para diferentes ambientes
 const getApiBaseUrl = () => {
   // Priorizar variável de ambiente se definida
-  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
-    return process.env.NEXT_PUBLIC_BACKEND_URL
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL + '/api/v1'
   }
 
   // Para evitar problemas de hidratação, usar uma configuração consistente
-  // Em desenvolvimento local, usar localhost com prefixo da API
+  // Em desenvolvimento local, usar localhost
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:8000/api/v1'
   }
   
-  // Em produção ou Docker, usar o nome do serviço com prefixo da API
+  // Em produção no Render, usar a URL do backend
+  if (process.env.RENDER) {
+    return 'https://farol-backend.onrender.com/api/v1'
+  }
+  
+  // Fallback para Docker ou outras configurações
   return 'http://backend:8000/api/v1'
 }
 

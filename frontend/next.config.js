@@ -1,10 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Otimização para Docker - build standalone
-  output: 'standalone',
+  // Configuração para deploy estático no Render
+  output: 'export',
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
   
+  // Configuração de imagens para deploy estático
   images: {
-    domains: ['localhost'],
+    unoptimized: true,
+    domains: ['localhost', 'farol-backend.onrender.com'],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -16,14 +20,18 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: false,
   
-  // Configuração de proxy para API
+  // Configuração de proxy para desenvolvimento local
   async rewrites() {
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: 'http://backend:8000/api/v1/:path*',
-      },
-    ]
+    // Apenas em desenvolvimento local
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/api/v1/:path*',
+          destination: 'http://localhost:8000/api/v1/:path*',
+        },
+      ]
+    }
+    return []
   },
   
   // Configurações para Docker - Webpack

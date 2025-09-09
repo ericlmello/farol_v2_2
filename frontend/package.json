@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next export",
+    "deploy": "npm run build && npm run export",
+    "build:render": "npm run build"
   },
   "dependencies": {
     "@picovoice/porcupine-web": "^3.0.3",

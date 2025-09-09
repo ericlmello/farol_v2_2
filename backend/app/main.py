@@ -21,6 +21,9 @@ app = FastAPI(
 )
 
 # 3º: Definição da lista origins
+import os
+
+# Origins para desenvolvimento e produção
 origins = [
     "http://localhost:3000",  # Frontend local
     "http://127.0.0.1:3000",  # Frontend local alternativo
@@ -28,6 +31,14 @@ origins = [
     "http://localhost",       # Desenvolvimento
     "http://127.0.0.1",      # Desenvolvimento alternativo
 ]
+
+# Adicionar origins de produção do Render
+if os.getenv("RENDER"):
+    origins.extend([
+        "https://farol-frontend.onrender.com",  # Frontend no Render
+        "https://farol-v2.vercel.app",         # Vercel (alternativo)
+        "https://farol-v2.netlify.app",        # Netlify (alternativo)
+    ])
 
 # 4º: Aplicação do CORSMiddleware PRIMEIRO
 app.add_middleware(
@@ -63,3 +74,9 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+# Configuração para Render
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

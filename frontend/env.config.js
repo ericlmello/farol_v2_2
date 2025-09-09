@@ -1,12 +1,25 @@
-// Configuração de ambiente para o frontend
-module.exports = {
+// Configuração de variáveis de ambiente para diferentes ambientes
+const config = {
   development: {
-    API_URL: 'http://localhost:8000'
+    NEXT_PUBLIC_API_URL: 'http://localhost:8000',
+    NODE_ENV: 'development'
   },
   production: {
-    API_URL: 'http://backend:8000'
+    NEXT_PUBLIC_API_URL: 'https://farol-backend.onrender.com',
+    NODE_ENV: 'production'
   },
-  docker: {
-    API_URL: 'http://backend:8000'
+  render: {
+    NEXT_PUBLIC_API_URL: 'https://farol-backend.onrender.com',
+    NODE_ENV: 'production'
   }
 }
+
+// Determinar ambiente
+const environment = process.env.NODE_ENV || 'development'
+const isRender = process.env.RENDER === 'true'
+
+// Selecionar configuração
+const selectedConfig = isRender ? config.render : config[environment]
+
+// Exportar configuração
+module.exports = selectedConfig
