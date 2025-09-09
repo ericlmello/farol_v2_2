@@ -3,7 +3,7 @@ services:
   - type: web
     name: farol-backend
     runtime: python
-    plan: starter
+    plan: free
     region: oregon
     buildCommand: |
       pip install -r requirements.txt
@@ -32,7 +32,7 @@ services:
   - type: web
     name: farol-frontend
     runtime: static
-    plan: starter
+    plan: free
     buildCommand: |
       npm install
       npm run build
@@ -53,6 +53,6 @@ databases:
   - name: farol-db
     databaseName: farol_db_data
     user: farol_user
-    plan: starter
+    plan: free
     region: oregon
 
