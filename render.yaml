@@ -49,7 +49,7 @@ services:
     rootDir: ./frontend
 
   # Database
-  - type: pserv
+  - type: postgres
     name: farol-db
     plan: starter
     region: oregon
