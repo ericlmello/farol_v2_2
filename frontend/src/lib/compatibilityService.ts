@@ -2,6 +2,9 @@ import { Job } from './jobs'
 import { Profile } from './profile'
 import { CompatibilityCalculator, type CompatibilityScore, type JobWithCompatibility } from './compatibility'
 
+// Re-exportar o tipo para facilitar importação
+export type { JobWithCompatibility } from './compatibility'
+
 // Perfil padrão para programador backend Python
 const DEFAULT_PYTHON_PROFILE: Profile = {
   id: 0,

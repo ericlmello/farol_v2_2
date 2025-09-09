@@ -15,8 +15,8 @@ interface FeedbackHistory {
   interviewType: string
   date: string
   overallScore: number
-  status: 'completed' | 'in_progress' | 'pending'
-  type: 'interview' | 'cv_analysis'
+  status: 'completed' | 'in_progress' | 'pending' | string
+  type: 'interview' | 'cv_analysis' | string
 }
 
 
@@ -93,7 +93,7 @@ export default function FeedbackPage() {
             type: 'cv_analysis'
           }
         ]
-        setFeedbackHistory(mockData as FeedbackHistory[])
+        setFeedbackHistory(mockData)
         return
       }
 

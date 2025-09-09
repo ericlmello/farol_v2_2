@@ -287,7 +287,7 @@ export class CompatibilityCalculator {
     )
 
     return {
-      jobId,
+      jobId: job.id,
       score: Math.min(100, Math.max(0, score)),
       factors,
       details: this.getCompatibilityDetailsWithProfile(profile, job)
@@ -378,6 +378,8 @@ export class CompatibilityCalculator {
       jobLevel = 'junior'
     } else if (EXPERIENCE_LEVELS.senior.some(keyword => jobText.includes(keyword))) {
       jobLevel = 'senior'
+    } else if (EXPERIENCE_LEVELS.pleno.some(keyword => jobText.includes(keyword))) {
+      jobLevel = 'pleno'
     }
 
     // Determinar nível do candidato (4 anos = pleno)
@@ -385,10 +387,10 @@ export class CompatibilityCalculator {
 
     // Calcular compatibilidade de nível
     if (jobLevel === candidateLevel) return 100
-    if (jobLevel === 'pleno' && candidateLevel === 'senior') return 90
-    if (jobLevel === 'senior' && candidateLevel === 'pleno') return 70
-    if (jobLevel === 'junior' && candidateLevel === 'pleno') return 80
-    if (jobLevel === 'pleno' && candidateLevel === 'junior') return 60
+    if ((jobLevel as string) === 'pleno' && (candidateLevel as string) === 'senior') return 90
+    if ((jobLevel as string) === 'senior' && (candidateLevel as string) === 'pleno') return 70
+    if ((jobLevel as string) === 'junior' && (candidateLevel as string) === 'pleno') return 80
+    if ((jobLevel as string) === 'pleno' && (candidateLevel as string) === 'junior') return 60
 
     return 50
   }

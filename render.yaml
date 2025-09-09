@@ -31,11 +31,11 @@ services:
   # Frontend
   - type: web
     name: farol-frontend
-    runtime: static
+    runtime: node
     buildCommand: |
       npm install
       npm run build
-    staticPublishPath: ./out
+    startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://farol-backend.onrender.com

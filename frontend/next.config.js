@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configuração para deploy estático no Render
-  output: 'export',
+  // output: 'export', // Removido para permitir páginas dinâmicas
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
   
