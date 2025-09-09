@@ -25,8 +25,11 @@ const getApiBaseUrl = () => {
 const API_BASE_URL = getApiBaseUrl()
 
 // Log para debug (apenas em desenvolvimento e no cliente)
-if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+if (typeof window !== 'undefined') {
   console.log('🔗 API Base URL:', API_BASE_URL)
+  console.log('🔗 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL)
+  console.log('🔗 NODE_ENV:', process.env.NODE_ENV)
+  console.log('🔗 RENDER:', process.env.RENDER)
 }
 
 export const api = axios.create({
