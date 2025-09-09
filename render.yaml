@@ -48,7 +48,8 @@ services:
         value: 20.11.0
     autoDeployTrigger: commit
     branch: main
-    rootDir: ./frontend
+    plan: free
+    region: oregon
 
 # Banco de Dados
 databases:
