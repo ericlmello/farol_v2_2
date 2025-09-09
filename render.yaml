@@ -49,8 +49,10 @@ services:
     rootDir: ./frontend
 
   # Database
-  - type: postgres
+databases:
     name: farol-db
+    databaseName: farol_db_data
+    user: farol_user
     plan: starter
     region: oregon
     autoDeploy: true
