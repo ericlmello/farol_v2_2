@@ -33,7 +33,6 @@ services:
     name: farol-frontend
     env: static
     plan: starter
-    region: oregon
     buildCommand: |
       npm install
       npm run build
@@ -53,6 +52,5 @@ services:
   - type: pserv
     name: farol-db
     plan: starter
-    env: postgresql
     region: oregon
     autoDeploy: true
