@@ -33,8 +33,7 @@ services:
     name: farol-frontend
     runtime: node
     buildCommand: |
-      npm install
-      npm run build
+      npm install && npm run build
     startCommand: npm start
     rootDir: ./frontend
     envVars:
@@ -54,7 +53,7 @@ services:
 # Banco de Dados
 databases:
   - name: farol-db
-    databaseName: farol_db_data
+    databaseName: farol_db_data_fcx1
     user: farol_user
     plan: free
     region: oregon
