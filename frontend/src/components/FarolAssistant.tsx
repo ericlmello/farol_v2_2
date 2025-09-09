@@ -181,7 +181,8 @@ export function FarolAssistant() {
 
       // Timeout de 10 segundos
       timeoutRef.current = setTimeout(() => {
-        if (state === 'listening') {
+        // Verificar se ainda está escutando através do MediaRecorder
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
           stopListening()
           speakResponse('Tempo limite atingido. Tente novamente.')
         }
