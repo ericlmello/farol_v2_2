@@ -55,5 +55,5 @@ services:
     plan: starter
     env: postgresql
     region: oregon
-    postgresMajorVersion: 15
+    postgresVersion: 15
     autoDeploy: true
