@@ -17,6 +17,9 @@ async def get_interviews(
 ):
     """Retorna lista de entrevistas agendadas para o usuário logado"""
     
+    # Log para confirmar sucesso da autenticação
+    print(f'✅ Usuário {current_user.id} ({current_user.email}) acessou /interviews com sucesso')
+    
     # Dados mockados - em produção viria do banco de dados
     mock_interviews = [
         {

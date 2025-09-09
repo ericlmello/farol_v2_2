@@ -18,7 +18,7 @@ from ..core.config import settings
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 # Configuração OAuth2
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     """Autentica um usuário verificando email e senha"""
@@ -116,6 +116,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     """Obtém o usuário atual baseado no token JWT"""
+    print(f'🔍 Validando token: {token[:20]}...' if token else '❌ Token não fornecido')
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Não foi possível validar as credenciais",
@@ -123,13 +125,18 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     )
     
     email = get_current_user_email(token)
+    print(f'📧 Email extraído do token: {email}')
+    
     if email is None:
+        print('❌ Email não encontrado no token')
         raise credentials_exception
     
     user = db.query(User).filter(User.email == email).first()
     if user is None:
+        print(f'❌ Usuário não encontrado no banco para email: {email}')
         raise credentials_exception
     
+    print(f'✅ Usuário autenticado: {user.id} ({user.email})')
     return user
 
 @router.get("/me", response_model=UserSchema)
