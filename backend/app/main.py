@@ -42,25 +42,15 @@ if os.getenv("RENDER"):
     ])
 
 # 4º: Aplicação do CORSMiddleware PRIMEIRO
-# Em produção, permitir todas as origens para resolver problemas de CORS
-if os.getenv("RENDER"):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],  # Permitir todas as origens em produção
-        allow_credentials=False,  # Deve ser False quando allow_origins=["*"]
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["*"],
-        expose_headers=["*"],
-    )
-else:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["*"],
-        expose_headers=["*"],
-    )
+# Configuração de CORS mais permissiva para resolver problemas
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir todas as origens
+    allow_credentials=False,  # Deve ser False quando allow_origins=["*"]
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
 
 # 5º: Criação do api_router com prefixo global
 api_router = APIRouter(prefix="/api/v1")
