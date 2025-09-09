@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* REGRA MESTRA: Fundo claro (#f9f7f2) com texto escuro (#061531) */
+  --foreground-rgb: 6, 21, 49;
+  --background-start-rgb: 249, 247, 242;
+  --background-end-rgb: 249, 247, 242;
+  
+  /* ShadCN/UI CSS Variables - Tema claro unificado com alto contraste WCAG AA */
+  --background: 45 25% 96%; /* #f9f7f2 - Fundo principal claro */
+  --foreground: 220 100% 11%; /* #061531 - Texto principal escuro */
+  
+  /* Cards e popovers - Fundo claro com texto escuro */
+  --card: 0 0% 100%; /* #ffffff - Fundo branco para cards */
+  --card-foreground: 220 100% 11%; /* #061531 - Texto escuro sobre fundo claro */
+  --popover: 0 0% 100%; /* #ffffff - Fundo branco para popovers */
+  --popover-foreground: 220 100% 11%; /* #061531 - Texto escuro sobre fundo claro */
+  
+  /* Elementos primários - Fundo escuro com texto claro */
+  --primary: 220 100% 11%; /* #061531 - Fundo escuro para elementos primários */
+  --primary-foreground: 45 25% 96%; /* #f9f7f2 - Texto claro sobre fundo escuro */
+  
+  /* Elementos secundários - Fundo claro com texto escuro */
+  --secondary: 210 40% 96%; /* #f1f5f9 - Fundo cinza claro para botões secundários */
+  --secondary-foreground: 220 100% 11%; /* #061531 - Texto escuro sobre fundo claro */
+  
+  /* Elementos muted - Fundo claro com texto escuro */
+  --muted: 210 40% 96%; /* #f1f5f9 - Fundo cinza claro */
+  --muted-foreground: 220 13% 20%; /* #374151 - Texto escuro para alto contraste WCAG AA */
+  
+  /* Elementos de destaque - Fundo claro com texto escuro */
+  --accent: 210 40% 96%; /* #f1f5f9 - Fundo cinza claro para hover */
+  --accent-foreground: 220 100% 11%; /* #061531 - Texto escuro sobre fundo claro */
+  
+  /* Estados destrutivos - Fundo escuro com texto claro */
+  --destructive: 0 84% 50%; /* #dc2626 - Vermelho escuro */
+  --destructive-foreground: 0 0% 100%; /* #ffffff - Texto branco sobre fundo escuro */
+  
+  /* Bordas e inputs - Fundo claro com texto escuro */
+  --border: 220 13% 75%; /* #9ca3af - Bordas visíveis */
+  --input: 0 0% 100%; /* #ffffff - Fundo branco para inputs */
+  --ring: 220 100% 11%; /* #061531 - Anel de foco escuro */
+  
+  /* Cores de status - Fundo escuro com texto claro */
+  --success: 158 64% 52%; /* #059669 - Verde escuro */
+  --success-foreground: 0 0% 100%; /* #ffffff - Texto branco sobre fundo escuro */
+  --warning: 32 95% 44%; /* #d97706 - Laranja escuro */
+  --warning-foreground: 0 0% 100%; /* #ffffff - Texto branco sobre fundo escuro */
+  --info: 199 89% 48%; /* #0284c7 - Azul escuro */
+  --info-foreground: 0 0% 100%; /* #ffffff - Texto branco sobre fundo escuro */
+  
+  --radius: 0.5rem;
+}
+
+/* MODO ESCURO DESABILITADO - TEMA CLARO UNIFICADO */
+/* Forçando tema claro em todo o site para consistência visual */
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Ensure all text elements have proper color */
+* {
+  color: inherit;
+}
+
+/* Override for form elements to ensure they have proper text color */
+input, select, textarea, button {
+  color: hsl(var(--foreground)) !important; /* Usa a cor foreground do tema */
+}
+
+/* Ensure labels have proper color */
+label {
+  color: hsl(var(--foreground)) !important; /* Usa a cor foreground do tema */
+}
