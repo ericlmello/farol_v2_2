@@ -28,6 +28,7 @@ export function FarolAssistant() {
   const [isSupported, setIsSupported] = useState(false)
   const [wakeWordEnabled, setWakeWordEnabled] = useState(false)
   const [wakeWordDetected, setWakeWordDetected] = useState(false)
+  const [isWakeWordActive, setIsWakeWordActive] = useState(false) // Estado para controlar se o wake word está ativo
   
   // Refs para MediaRecorder e controles
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
@@ -36,62 +37,104 @@ export function FarolAssistant() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // useEffect para inicialização única do wake word
   useEffect(() => {
-    // Verificar suporte para MediaRecorder
-    if (typeof window !== 'undefined' && window.MediaRecorder) {
-      setIsSupported(true)
-    } else {
-      console.warn('⚠️ MediaRecorder não suportado neste navegador')
+    let isMounted = true
+
+    const initializeServices = async () => {
+      try {
+        // Verificar suporte para MediaRecorder
+        if (typeof window !== 'undefined' && window.MediaRecorder) {
+          setIsSupported(true)
+        } else {
+          console.warn('⚠️ MediaRecorder não suportado neste navegador')
+          return
+        }
+
+        // Verificar se o wake word já está ativo para evitar inicializações duplicadas
+        if (isWakeWordActive) {
+          console.log('🔄 Wake word já está ativo, pulando inicialização')
+          return
+        }
+
+        // Inicializar wake word detection apenas uma vez
+        if (wakeWordService.isAvailable() && !isWakeWordActive) {
+          console.log('🔄 Inicializando wake word detection...')
+          setIsWakeWordActive(true)
+          setWakeWordEnabled(true)
+          
+          // Iniciar escuta contínua
+          const success = await wakeWordService.startListening((detection: WakeWordDetection) => {
+            if (isMounted) {
+              console.log('🎯 Wake word detectada:', detection)
+              setWakeWordDetected(true)
+              speakResponse('Olá! Como posso ajudar?')
+              
+              // Auto-iniciar captura de áudio após wake word
+              setTimeout(() => {
+                if (isMounted) {
+                  startListening()
+                }
+              }, 1000)
+            }
+          })
+
+          if (!success) {
+            console.warn('⚠️ Falha ao inicializar wake word detection')
+            setIsWakeWordActive(false)
+            setWakeWordEnabled(false)
+          } else {
+            console.log('✅ Wake word detection inicializado com sucesso')
+          }
+        } else {
+          console.warn('⚠️ Wake word detection não disponível')
+        }
+      } catch (error) {
+        console.error('❌ Erro ao inicializar serviços:', error)
+        if (isMounted) {
+          setIsWakeWordActive(false)
+          setWakeWordEnabled(false)
+        }
+      }
     }
 
-    // Inicializar wake word detection
-    initializeWakeWord()
+    initializeServices()
 
+    // Função de limpeza
     return () => {
-      // Cleanup
+      isMounted = false
+      
+      // Cleanup de recursos de áudio
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop())
+        streamRef.current = null
       }
+      
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
       }
-      // Cleanup wake word
-      wakeWordService.cleanup()
-    }
-  }, [])
 
-  /**
-   * Inicializa o wake word detection
-   */
-  const initializeWakeWord = async () => {
-    try {
-      if (wakeWordService.isAvailable()) {
-        setWakeWordEnabled(true)
-        console.log('✅ Wake word detection disponível')
-        
-        // Iniciar escuta contínua
-        await wakeWordService.startListening((detection: WakeWordDetection) => {
-          console.log('🎯 Wake word detectada:', detection)
-          setWakeWordDetected(true)
-          speakResponse('Olá! Como posso ajudar?')
-          
-          // Auto-iniciar captura de áudio após wake word
-          setTimeout(() => {
-            startListening()
-          }, 1000)
-        })
-      } else {
-        console.warn('⚠️ Wake word detection não disponível')
+      // Cleanup do wake word service
+      if (isWakeWordActive) {
+        console.log('🧹 Limpando wake word service...')
+        wakeWordService.cleanup()
+        setIsWakeWordActive(false)
       }
-    } catch (error) {
-      console.error('❌ Erro ao inicializar wake word:', error)
     }
-  }
+  }, []) // Array de dependências vazio para execução única
+
 
   /**
    * Inicia a captura de áudio
    */
   const startListening = async () => {
+    // Verificar se já está em processo de escuta para evitar chamadas duplicadas
+    if (state === 'listening' || state === 'processing' || state === 'speaking') {
+      console.log('🔄 Já está em processo de escuta, ignorando chamada duplicada')
+      return
+    }
+
     try {
       setState('listening')
       setTranscript('')
@@ -167,22 +210,36 @@ export function FarolAssistant() {
    * Para a captura de áudio
    */
   const stopListening = () => {
+    console.log('🔇 Parando captura de áudio...')
+    
+    // Parar MediaRecorder se estiver ativo
     if (mediaRecorderRef.current && state === 'listening') {
-      mediaRecorderRef.current.stop()
-      
-      // Parar todas as tracks do stream
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop())
-        streamRef.current = null
+      try {
+        mediaRecorderRef.current.stop()
+        mediaRecorderRef.current = null
+      } catch (error) {
+        console.warn('⚠️ Erro ao parar MediaRecorder:', error)
       }
-      
-      // Limpar timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-        timeoutRef.current = null
-      }
-      
-      console.log('🔇 Parando captura de áudio...')
+    }
+    
+    // Parar todas as tracks do stream
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => {
+        track.stop()
+        console.log('🔇 Track parada:', track.kind)
+      })
+      streamRef.current = null
+    }
+    
+    // Limpar timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    
+    // Resetar estado se estiver escutando
+    if (state === 'listening') {
+      setState('idle')
     }
   }
 
