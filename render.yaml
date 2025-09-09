@@ -32,7 +32,6 @@ services:
   - type: web
     name: farol-frontend
     runtime: static
-    plan: free                   # ALTERADO DE starter PARA free
     buildCommand: |
       npm install
       npm run build
@@ -48,10 +47,10 @@ services:
     branch: main
     rootDir: ./frontend
 
-# Lista de bancos de dados PostgreSQL
+# Banco de Dados
 databases:
   - name: farol-db
     databaseName: farol_db_data
     user: farol_user
-    plan: free                   # ALTERADO DE starter PARA free
+    plan: free
     region: oregon
