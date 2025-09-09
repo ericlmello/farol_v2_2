@@ -93,7 +93,7 @@ export default function FeedbackPage() {
             type: 'cv_analysis'
           }
         ]
-        setFeedbackHistory(mockData)
+        setFeedbackHistory(mockData as FeedbackHistory[])
         return
       }
 

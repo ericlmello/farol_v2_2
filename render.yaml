@@ -44,7 +44,7 @@ services:
       - key: RENDER
         value: true
       - key: NODE_VERSION
-        value: 18.18.0
+        value: 20.11.0
     autoDeployTrigger: commit
     branch: main
     rootDir: ./frontend
