@@ -49,10 +49,10 @@ services:
     rootDir: ./frontend
 
   # Database
-databases:
-    name: farol-db
-    databaseName: farol_db_data
-    user: farol_user
-    plan: starter
-    region: oregon
-    autoDeploy: true
+  databases:
+    - name: farol-db
+      databaseName: farol_db_data
+      user: farol_user
+      plan: starter
+      region: oregon
+      autoDeploy: true
