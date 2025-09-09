@@ -42,14 +42,25 @@ if os.getenv("RENDER"):
     ])
 
 # 4º: Aplicação do CORSMiddleware PRIMEIRO
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-)
+# Em produção, permitir todas as origens para resolver problemas de CORS
+if os.getenv("RENDER"):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Permitir todas as origens em produção
+        allow_credentials=False,  # Deve ser False quando allow_origins=["*"]
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
+        expose_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
+        expose_headers=["*"],
+    )
 
 # 5º: Criação do api_router com prefixo global
 api_router = APIRouter(prefix="/api/v1")
@@ -75,6 +86,10 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.get("/api/v1/health")
+async def api_health_check():
+    return {"status": "healthy", "api": "v1"}
 
 # Configuração para Render
 if __name__ == "__main__":
