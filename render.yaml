@@ -2,7 +2,7 @@ services:
   # Backend API
   - type: web
     name: farol-backend
-    env: python
+    runtime: python
     plan: starter
     region: oregon
     buildCommand: |
@@ -24,14 +24,14 @@ services:
       - key: SEED_DATA
         value: true
     healthCheckPath: /health
-    autoDeploy: true
+    autoDeployTrigger: commit
     branch: main
     rootDir: ./backend
 
   # Frontend
   - type: web
     name: farol-frontend
-    env: static
+    runtime: static
     plan: starter
     buildCommand: |
       npm install
@@ -44,15 +44,15 @@ services:
         value: production
       - key: RENDER
         value: true
-    autoDeploy: true
+    autoDeployTrigger: commit
     branch: main
     rootDir: ./frontend
 
-  # Database
-  databases:
-    - name: farol-db
-      databaseName: farol_db_data
-      user: farol_user
-      plan: starter
-      region: oregon
-      autoDeploy: true
+# List all PostgreSQL databases here
+databases:
+  - name: farol-db
+    databaseName: farol_db_data
+    user: farol_user
+    plan: starter
+    region: oregon
+
