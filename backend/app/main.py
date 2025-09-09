@@ -36,6 +36,7 @@ origins = [
 if os.getenv("RENDER"):
     origins.extend([
         "https://farol-frontend.onrender.com",  # Frontend no Render
+        "https://farol-frontend-vl11.onrender.com",  # Frontend atual no Render
         "https://farol-v2.vercel.app",         # Vercel (alternativo)
         "https://farol-v2.netlify.app",        # Netlify (alternativo)
     ])
