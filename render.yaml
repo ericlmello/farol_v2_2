@@ -1,66 +1,59 @@
-# render.yaml - Versão Corrigida e Otimizada
-
 services:
-  # 1. Banco de Dados PostgreSQL
-  # Corrigido: 'type' para 'psql' e removidas chaves desnecessárias.
-  - type: psql
-    name: farol-db
-    plan: starter
-    region: oregon
-    postgresMajorVersion: 15
-
-  # 2. Backend API Python
-  # Corrigido: 'fromDatabase' para 'fromService' para a conexão correta.
+  # Backend API
   - type: web
     name: farol-backend
     env: python
-    rootDir: ./backend
     plan: starter
     region: oregon
-    branch: main
-    autoDeploy: true
-    healthCheckPath: /health
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
     startCommand: python start.py
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
       - key: DATABASE_URL
-        fromService:
-          type: psql
-          name: farol-db # Nome do serviço de banco de dados definido acima
+        fromDatabase:
+          name: farol-db
           property: connectionString
       - key: OPENAI_API_KEY
-        sync: false # Correto: o valor será adicionado pelo dashboard
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.0
       - key: RENDER
         value: true
       - key: CREATE_TEST_USER
         value: true
       - key: SEED_DATA
         value: true
+    healthCheckPath: /health
+    autoDeploy: true
+    branch: main
+    rootDir: ./backend
 
-  # 3. Frontend Static
-  # Melhorado: 'type' para 'static' para melhor performance e custo.
-  # Melhorado: URL da API agora é dinâmica usando 'fromService'.
-  - type: static
+  # Frontend
+  - type: web
     name: farol-frontend
-    env: static # Mantido para clareza, mas 'type: static' é o principal
-    rootDir: ./frontend
+    env: static
     plan: starter
     region: oregon
-    branch: main
-    autoDeploy: true
     buildCommand: |
       npm install
       npm run build
-    staticPublishPath: ./out # Esta chave funciona corretamente com 'type: static'
+    staticPublishPath: ./out
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: farol-backend # Nome do serviço de backend definido acima
-          property: url
+        value: https://farol-backend.onrender.com
       - key: NODE_ENV
         value: production
       - key: RENDER
         value: true
+    autoDeploy: true
+    branch: main
+    rootDir: ./frontend
+
+  # Database
+  - type: pserv
+    name: farol-db
+    plan: starter
+    env: postgresql
+    region: oregon
+    postgresMajorVersion: 15
+    autoDeploy: true
