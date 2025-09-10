@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Button } from '@/components/ui'
+import { Button, RainbowButton } from '@/components/ui'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
 
 export default function Home() {
@@ -37,14 +37,14 @@ export default function Home() {
             {/* Botões */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
               <Link href="/register">
-                <Button size="lg" className="text-lg px-8 py-6">
+                <RainbowButton className="text-lg px-8 py-6">
                   Criar Conta Gratuitamente
-                </Button>
+                </RainbowButton>
               </Link>
               <Link href="/login">
-                <Button variant="outline" size="lg" className="text-lg px-8 py-6">
+                <RainbowButton className="text-lg px-8 py-6">
                   Já tenho conta
-                </Button>
+                </RainbowButton>
               </Link>
             </div>
             
@@ -258,9 +258,9 @@ export default function Home() {
                 </div>
                 <div className="pt-8">
                   <Link href="/register">
-                    <Button className="w-full text-foreground" variant="outline" size="lg">
+                    <RainbowButton className="w-full text-foreground">
                       Comece Agora
-                    </Button>
+                    </RainbowButton>
                   </Link>
                 </div>
               </CardContent>
@@ -317,9 +317,9 @@ export default function Home() {
                 </div>
                 <div className="pt-8">
                   <Link href="/register">
-                      <Button className="w-full" size="lg">
+                    <RainbowButton className="w-full">
                       Seja Premium
-                    </Button>
+                    </RainbowButton>
                   </Link>
                 </div>
               </CardContent>
@@ -338,9 +338,9 @@ export default function Home() {
                   talentos e ferramentas de analytics para fortalecer sua marca empregadora inclusiva.
                 </p>
                 <div className="pt-8">
-                  <Button className="w-full text-foreground" variant="outline" size="lg">
+                  <RainbowButton className="w-full text-foreground">
                     Solicitar Contato
-                  </Button>
+                  </RainbowButton>
                 </div>
               </CardContent>
             </Card>
@@ -360,14 +360,14 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register">
-              <Button size="lg" className="text-lg px-8 py-6">
+              <RainbowButton className="text-lg px-8 py-6">
                 Comece Gratuitamente Agora
-              </Button>
+              </RainbowButton>
             </Link>
             <Link href="/login">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+              <RainbowButton className="text-lg px-8 py-6">
                 Já tenho conta
-              </Button>
+              </RainbowButton>
             </Link>
           </div>
         </div>
