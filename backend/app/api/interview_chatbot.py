@@ -26,10 +26,24 @@ def get_perplexity_client():
         raise ValueError("PERPLEXITY_API_KEY não configurada")
     
     try:
-        return openai.OpenAI(
-            api_key=API_KEY,
-            base_url="https://api.perplexity.ai"
-        )
+        # Tentar diferentes formas de inicializar o cliente
+        try:
+            # Método 1: Inicialização padrão
+            return openai.OpenAI(
+                api_key=API_KEY,
+                base_url="https://api.perplexity.ai"
+            )
+        except Exception as e1:
+            print(f"Erro método 1: {e1}")
+            try:
+                # Método 2: Sem base_url (fallback)
+                return openai.OpenAI(api_key=API_KEY)
+            except Exception as e2:
+                print(f"Erro método 2: {e2}")
+                # Método 3: Usar openai.api_key diretamente
+                import openai as openai_module
+                openai_module.api_key = API_KEY
+                return openai_module
     except Exception as e:
         print(f"Erro ao criar cliente Perplexity: {e}")
         raise
@@ -145,12 +159,28 @@ def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: dict =
         messages.append({"role": "user", "content": pergunta})
         
         client = get_perplexity_client()
-        response = client.chat.completions.create(
-            model="sonar-pro",  # Modelo mais atual da Perplexity
-            messages=messages,
-            max_tokens=1000,
-            temperature=0.7
-        )
+        
+        # Tentar diferentes formas de fazer a chamada
+        try:
+            response = client.chat.completions.create(
+                model="sonar-pro",  # Modelo mais atual da Perplexity
+                messages=messages,
+                max_tokens=1000,
+                temperature=0.7
+            )
+        except Exception as e:
+            print(f"Erro na chamada da API: {e}")
+            # Fallback: tentar com modelo diferente
+            try:
+                response = client.chat.completions.create(
+                    model="llama-3.1-sonar-small-128k-online",
+                    messages=messages,
+                    max_tokens=1000,
+                    temperature=0.7
+                )
+            except Exception as e2:
+                print(f"Erro no fallback: {e2}")
+                raise e2
         
         return response.choices[0].message.content
         
