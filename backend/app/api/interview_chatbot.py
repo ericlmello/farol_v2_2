@@ -110,6 +110,40 @@ def validate_message_alternation(messages: List[dict]) -> List[dict]:
     
     return validated_messages
 
+def determine_job_type_from_focus_areas(focus_areas: List[str]) -> str:
+    """Determina o tipo de vaga baseado nas áreas de foco selecionadas"""
+    if not focus_areas:
+        return "vaga profissional"
+    
+    # Mapear áreas de foco para tipos de vaga
+    job_type_mapping = {
+        "frontend": "Desenvolvedor Frontend",
+        "backend": "Desenvolvedor Backend", 
+        "fullstack": "Desenvolvedor Full Stack",
+        "mobile": "Desenvolvedor Mobile",
+        "devops": "Especialista DevOps",
+        "data": "Cientista de Dados",
+        "ai": "Especialista em IA/ML",
+        "security": "Especialista em Segurança"
+    }
+    
+    # Se há múltiplas áreas, criar descrição combinada
+    if len(focus_areas) == 1:
+        return job_type_mapping.get(focus_areas[0], "vaga profissional")
+    elif len(focus_areas) == 2:
+        types = [job_type_mapping.get(area, area) for area in focus_areas]
+        return f"vaga de {types[0]} e {types[1]}"
+    else:
+        # Múltiplas áreas - usar descrição genérica mais específica
+        if "fullstack" in focus_areas:
+            return "Desenvolvedor Full Stack"
+        elif "backend" in focus_areas and "frontend" in focus_areas:
+            return "Desenvolvedor Full Stack"
+        elif "data" in focus_areas and "ai" in focus_areas:
+            return "Especialista em Data Science e IA"
+        else:
+            return "vaga multidisciplinar em tecnologia"
+
 def create_interview_prompt(config: SimulationConfig, user_profile: dict = None) -> str:
     """Cria um prompt personalizado baseado na configuração da simulação"""
     
@@ -144,11 +178,15 @@ def create_interview_prompt(config: SimulationConfig, user_profile: dict = None)
     interview_type = interview_type_map.get(config.interview_type, "Entrevista Técnica")
     difficulty = difficulty_map.get(config.difficulty_level, "Intermediário")
     
-    # Construir áreas de foco
-    focus_text = ""
-    if config.focus_areas:
-        focus_list = [focus_areas_map.get(area, area) for area in config.focus_areas]
-        focus_text = f"\n\nÁREAS DE FOCO ESPECÍFICAS:\n{chr(10).join(f'- {area}' for area in focus_list)}"
+    # Construir áreas de foco (obrigatórias)
+    if not config.focus_areas:
+        raise ValueError("Áreas de foco são obrigatórias para determinar o tipo de vaga")
+    
+    focus_list = [focus_areas_map.get(area, area) for area in config.focus_areas]
+    focus_text = f"\n\nÁREAS DE FOCO SELECIONADAS:\n{chr(10).join(f'- {area}' for area in focus_list)}"
+    
+    # Determinar tipo de vaga baseado nas áreas de foco
+    job_type = determine_job_type_from_focus_areas(config.focus_areas)
     
     # Informações do perfil do usuário (se disponível)
     profile_info = ""
@@ -161,10 +199,11 @@ PERFIL DO CANDIDATO:
 - Habilidades: {', '.join(user_profile.get('skills', []))}
 """
     
-    prompt = f"""Você é um entrevistador de RH real e experiente, conduzindo uma {interview_type} para uma vaga profissional. Seja genuinamente humano, natural e conversacional.
+    prompt = f"""Você é um entrevistador de RH real e experiente, conduzindo uma {interview_type} para uma vaga de {job_type}. Seja genuinamente humano, natural e conversacional.
 
 CONTEXTO:
-- Tipo: {interview_type}
+- Tipo de Entrevista: {interview_type}
+- Tipo de Vaga: {job_type}
 - Nível: {difficulty}
 - Duração: {config.duration} minutos
 - Modo: {'Voz' if config.interaction_mode == 'voice' else 'Texto'}{focus_text}
@@ -193,13 +232,13 @@ IMPORTANTE:
 - NUNCA seja robótico ou formal demais
 - Reaja às respostas como uma pessoa real faria
 - Se o candidato errar, seja gentil e explique
-- Use exemplos do dia a dia relevantes para a área
+- Use exemplos do dia a dia relevantes para {job_type}
 - Faça a entrevista fluir como uma conversa natural
-- Adapte as perguntas à área de foco selecionada
+- Adapte as perguntas especificamente para {job_type}
 - Seja específico nas perguntas, mas de forma conversacional
-- Para vagas técnicas: foque em habilidades práticas e experiência
-- Para vagas gerenciais: foque em liderança e gestão de equipes
-- Para vagas comerciais: foque em vendas e relacionamento com clientes
+- Foque nas habilidades e competências essenciais para {job_type}
+- Use terminologia técnica apropriada para a área
+- Faça perguntas práticas e situacionais relevantes para o cargo
 
 Inicie agora com uma saudação natural e humana."""
 

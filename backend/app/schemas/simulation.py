@@ -7,7 +7,7 @@ class SimulationConfig(BaseModel):
     difficulty_level: str  # beginner, intermediate, advanced, expert
     duration: str  # 15, 30, 45, 60 (minutos)
     interaction_mode: str  # text, voice
-    focus_areas: List[str] = []  # frontend, backend, fullstack, etc.
+    focus_areas: List[str]  # frontend, backend, fullstack, etc. - OBRIGATÓRIO
 
 class SimulationSession(BaseModel):
     id: str
