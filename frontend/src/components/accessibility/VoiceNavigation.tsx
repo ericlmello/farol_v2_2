@@ -47,7 +47,7 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ className = '' }) => 
           speak('Estou ouvindo. Pode falar seu comando.')
         }
         
-        recognitionInstance.onresult = (event) => {
+        recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = Array.from(event.results)
             .map(result => result[0])
             .map(result => result.transcript)
@@ -58,7 +58,7 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ className = '' }) => 
           }
         }
         
-        recognitionInstance.onerror = (event) => {
+        recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
           console.error('Erro no reconhecimento de voz:', event.error)
           setIsListening(false)
           speak('Desculpe, não consegui entender. Tente novamente.')
