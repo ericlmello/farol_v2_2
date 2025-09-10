@@ -25,14 +25,28 @@ export default function RealtimeInterviewPage() {
       setLoading(true)
       setError('')
 
+      console.log('🔄 Carregando entrevistas da API...')
       const data = await interviewsService.getInterviews()
-      setInterviews(data.interviews || [])
+      console.log('✅ Entrevistas carregadas:', data)
+      
+      // O backend retorna um array direto, não um objeto com interviews
+      const interviewsArray = Array.isArray(data) ? data : (data.interviews || [])
+      setInterviews(interviewsArray)
+      
+      // Calcular estatísticas
+      const totalInterviews = interviewsArray.length
+      const upcomingInterviews = interviewsArray.filter((interview: any) => 
+        interview.status === 'agendada' || interview.status === 'confirmada'
+      ).length
+      
       setStats({
-        totalInterviews: data.total_interviews || 0,
-        upcomingInterviews: data.upcoming_interviews || 0
+        totalInterviews,
+        upcomingInterviews
       })
+      
+      console.log('📊 Estatísticas:', { totalInterviews, upcomingInterviews })
     } catch (err: any) {
-      console.error('Erro ao carregar entrevistas:', err)
+      console.error('❌ Erro ao carregar entrevistas:', err)
       setError(err.message || 'Erro ao carregar entrevistas. Tente novamente.')
     } finally {
       setLoading(false)

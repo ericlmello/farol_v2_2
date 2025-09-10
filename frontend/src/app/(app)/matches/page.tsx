@@ -81,13 +81,44 @@ export default function MatchesPage() {
       setLoading(true)
       setError('')
 
-      // Simular delay de carregamento para demonstração
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // Usar dados mockados em vez da API
+      console.log('🔄 Carregando matches da API...')
+      
+      // Usar a API real
+      const response = await matchesService.getMatches()
+      console.log('✅ Matches carregados:', response)
+      
+      // Converter dados da API para o formato esperado
+      const apiMatches: MatchAnalysis[] = response.map((match: any) => ({
+        id: match.id,
+        jobTitle: match.job_title,
+        companyName: match.company_name,
+        compatibilityScore: match.compatibility_score,
+        skillsTags: match.skills_tags || [],
+        matchReason: match.match_reason,
+        workModel: match.work_model as 'Remoto' | 'Híbrido' | 'Presencial',
+        level: 'Pleno' as 'Júnior' | 'Pleno' | 'Sênior' // Default, pode ser melhorado
+      }))
+      
+      setMatches(apiMatches)
+      
+      // Calcular estatísticas dos dados da API
+      const totalMatches = apiMatches.length
+      const avgCompatibility = totalMatches > 0 ? Math.round(
+        apiMatches.reduce((sum, match) => sum + match.compatibilityScore, 0) / totalMatches
+      ) : 0
+      
+      setStats({
+        totalMatches,
+        avgCompatibility
+      })
+    } catch (err: any) {
+      console.error('❌ Erro ao carregar matches:', err)
+      setError(err.message || 'Erro ao carregar matches. Tente novamente.')
+      
+      // Fallback para dados mockados em caso de erro
+      console.log('🔄 Usando dados mockados como fallback...')
       setMatches(MOCK_MATCHES)
       
-      // Calcular estatísticas dos dados mockados
       const totalMatches = MOCK_MATCHES.length
       const avgCompatibility = Math.round(
         MOCK_MATCHES.reduce((sum, match) => sum + match.compatibilityScore, 0) / totalMatches
@@ -97,9 +128,6 @@ export default function MatchesPage() {
         totalMatches,
         avgCompatibility
       })
-    } catch (err: any) {
-      console.error('Erro ao carregar matches:', err)
-      setError(err.message || 'Erro ao carregar matches. Tente novamente.')
     } finally {
       setLoading(false)
     }

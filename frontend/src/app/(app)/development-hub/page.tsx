@@ -364,7 +364,7 @@ export default function DevelopmentHubPage() {
                   </CardContent>
                   
                   <CardFooter>
-                    <Link href={`/development-hub/course/${course.id}`} className="w-full">
+                    <Link href={`/development-hub/${course.id}`} className="w-full">
                       <Button 
                         className="w-full border-[#061531] hover:bg-[#061531] hover:text-[#f9f7f2] transition-colors duration-200" 
                         variant={course.isCompleted ? "outline" : "default"}
