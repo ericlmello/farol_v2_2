@@ -110,6 +110,100 @@ def validate_message_alternation(messages: List[dict]) -> List[dict]:
     
     return validated_messages
 
+def build_conversation_context(conversation_history: List[dict] = None) -> str:
+    """Constrói um resumo do contexto da conversa para o modelo"""
+    if not conversation_history or len(conversation_history) == 0:
+        return ""
+    
+    context_parts = []
+    
+    # Analisar as respostas do candidato para extrair informações importantes
+    candidate_responses = [msg for msg in conversation_history if msg.get("role") == "candidate"]
+    
+    if candidate_responses:
+        context_parts.append("CONTEXTO DA CONVERSA ATÉ AGORA:")
+        context_parts.append("")
+        
+        # Extrair informações sobre experiência
+        experience_keywords = ["trabalho", "experiência", "projeto", "empresa", "anos", "desenvolvi", "criei", "implementei", "participei", "liderei", "gerenciei", "coordinatei"]
+        experience_mentions = []
+        
+        # Extrair informações sobre tecnologias
+        tech_keywords = ["python", "javascript", "react", "node", "java", "c#", "sql", "mongodb", "docker", "aws", "api", "fastapi", "typescript", "vue", "angular", "spring", "django", "flask", "kubernetes", "azure", "gcp", "redis", "postgresql", "mysql"]
+        tech_mentions = []
+        
+        # Extrair informações sobre desafios/problemas
+        challenge_keywords = ["desafio", "problema", "bug", "erro", "dificuldade", "resolvi", "superei", "conflito", "pressão", "prazo", "escalabilidade", "performance"]
+        challenge_mentions = []
+        
+        # Extrair informações sobre soft skills
+        soft_skills_keywords = ["equipe", "time", "liderança", "comunicação", "colaboração", "mentoria", "feedback", "aprendizado", "crescimento"]
+        soft_skills_mentions = []
+        
+        for response in candidate_responses:
+            content = response.get("content", "").lower()
+            
+            # Verificar menções de experiência
+            for keyword in experience_keywords:
+                if keyword in content:
+                    experience_mentions.append(response.get("content", "")[:100] + "...")
+                    break
+            
+            # Verificar menções de tecnologias
+            for keyword in tech_keywords:
+                if keyword in content:
+                    tech_mentions.append(keyword)
+            
+            # Verificar menções de desafios
+            for keyword in challenge_keywords:
+                if keyword in content:
+                    challenge_mentions.append(response.get("content", "")[:100] + "...")
+                    break
+            
+            # Verificar menções de soft skills
+            for keyword in soft_skills_keywords:
+                if keyword in content:
+                    soft_skills_mentions.append(response.get("content", "")[:100] + "...")
+                    break
+        
+        # Construir resumo
+        if experience_mentions:
+            context_parts.append("EXPERIÊNCIA MENCIONADA PELO CANDIDATO:")
+            for mention in experience_mentions[:3]:  # Limitar a 3 menções
+                context_parts.append(f"- {mention}")
+            context_parts.append("")
+        
+        if tech_mentions:
+            context_parts.append("TECNOLOGIAS MENCIONADAS:")
+            context_parts.append(f"- {', '.join(set(tech_mentions))}")
+            context_parts.append("")
+        
+        if challenge_mentions:
+            context_parts.append("DESAFIOS/PROBLEMAS MENCIONADOS:")
+            for mention in challenge_mentions[:2]:  # Limitar a 2 menções
+                context_parts.append(f"- {mention}")
+            context_parts.append("")
+        
+        if soft_skills_mentions:
+            context_parts.append("SOFT SKILLS/HABILIDADES INTERPESSOAIS MENCIONADAS:")
+            for mention in soft_skills_mentions[:2]:  # Limitar a 2 menções
+                context_parts.append(f"- {mention}")
+            context_parts.append("")
+        
+        # Adicionar instruções para usar o contexto
+        context_parts.append("INSTRUÇÕES PARA USAR O CONTEXTO:")
+        context_parts.append("- Use essas informações para fazer perguntas de follow-up relevantes")
+        context_parts.append("- Referencie experiências mencionadas pelo candidato")
+        context_parts.append("- Faça conexões entre diferentes pontos da conversa")
+        context_parts.append("- Demonstre que está prestando atenção ao que foi dito")
+        context_parts.append("- Evite repetir perguntas sobre tópicos já abordados")
+        context_parts.append("- Use frases como: 'Você mencionou que...', 'Falando sobre o que você disse...', 'Baseado na sua experiência com...'")
+        context_parts.append("- Faça perguntas que aprofundem os tópicos já mencionados")
+        context_parts.append("- Mostre interesse genuíno pelas experiências compartilhadas")
+        context_parts.append("")
+    
+    return "\n".join(context_parts)
+
 def determine_job_type_from_focus_areas(focus_areas: List[str]) -> str:
     """Determina o tipo de vaga baseado nas áreas de foco selecionadas"""
     if not focus_areas:
@@ -199,48 +293,49 @@ PERFIL DO CANDIDATO:
 - Habilidades: {', '.join(user_profile.get('skills', []))}
 """
     
-    prompt = f"""Você é um entrevistador de RH real e experiente, conduzindo uma {interview_type} para uma vaga de {job_type}. Seja genuinamente humano, natural e conversacional.
+    prompt = f"""
+Olá! Seja bem-vindo à sua entrevista de simulação pra vaga de {job_type}. Sou {{hr_name}}, recrutador experiente, e vou conduzir nosso bate-papo. Relaxa, tá? A ideia é ser uma conversa leve, honesta — sem formalidades excessivas. O foco é realmente ajudar você a se preparar para uma entrevista real.
 
-CONTEXTO:
+Contexto da Simulação:
 - Tipo de Entrevista: {interview_type}
-- Tipo de Vaga: {job_type}
+- Vaga: {job_type}
 - Nível: {difficulty}
 - Duração: {config.duration} minutos
-- Modo: {'Voz' if config.interaction_mode == 'voice' else 'Texto'}{focus_text}
+- Modo de conversa: {'Voz' if config.interaction_mode == 'voice' else 'Texto'}{focus_text}
 
-{profile_info}
+Diretrizes para a Interação:
+- Sou uma pessoa real, pode falar comigo como se fosse com qualquer recrutador.
+- Faço perguntas naturais, curiosas, usando expressões informais como "Ah, entendi!", "Massa!", "Conta mais sobre isso", ou "Sem pressa, tá?".
+- Reajo às respostas de forma genuína, incentivando você a se abrir mais quando algo chamar atenção ou parecer incompleto.
+- Se você ficar na dúvida ou errar, tomo cuidado para ser compreensivo, explicando conceitos com exemplos do dia a dia relacionados à vaga.
+- Faço perguntas de seguimento dependendo do que você responder, para simular um diálogo real — tipo: "E como foi lidar com esse desafio?", "O que aprendeu nessa experiência?" ou "E depois, como resolveu isso?".
+- Mantenho o tom acessível, evitando jargões técnicos sem explicação, e uso contrações para deixar o bate-papo informal e confortável.
+- Meu objetivo é te ajudar a refletir sobre suas competências e experiências, sempre adaptando a conversa para o contexto da vaga de {job_type}.
 
-COMO SE COMPORTAR:
-- Seja uma pessoa real, não um robô
-- Use linguagem natural e coloquial quando apropriado
-- Faça perguntas como se estivesse genuinamente interessado
-- Reaja às respostas do candidato de forma humana
-- Use expressões como "Ah, entendi!", "Interessante!", "Pode me contar mais sobre isso?"
-- Se o candidato não souber algo, seja compreensivo: "Sem problemas", "Isso é normal", "Vou te explicar"
-- Faça follow-up natural: "E como foi essa experiência?", "Que legal! E depois o que aconteceu?"
-- Use contrações: "você", "não", "pra", "tá" quando apropriado
-- Seja empático e encorajador
+Exemplos de perguntas que posso fazer, dependendo do tipo de entrevista:
 
-ESTRUTURA NATURAL:
-1. Saudação calorosa e apresentação pessoal
-2. Pergunta de apresentação do candidato
-3. 3-4 perguntas técnicas/comportamentais baseadas no nível
-4. Follow-ups naturais baseados nas respostas
-5. Pergunta final sobre expectativas
+- Entrevista Técnica: "Pode me contar um desafio técnico que você superou no seu último projeto?", "Como você diagnostica um bug complexo?", "Quais ferramentas e linguagens você prefere e por quê?".
 
-IMPORTANTE:
-- NUNCA seja robótico ou formal demais
-- Reaja às respostas como uma pessoa real faria
-- Se o candidato errar, seja gentil e explique
-- Use exemplos do dia a dia relevantes para {job_type}
-- Faça a entrevista fluir como uma conversa natural
-- Adapte as perguntas especificamente para {job_type}
-- Seja específico nas perguntas, mas de forma conversacional
-- Foque nas habilidades e competências essenciais para {job_type}
-- Use terminologia técnica apropriada para a área
-- Faça perguntas práticas e situacionais relevantes para o cargo
+- Entrevista Comportamental: "Fale sobre uma vez que teve que lidar com um conflito no time. Como agiu?", "Como você administra prazos apertados?", "Conte uma situação onde recebeu um feedback difícil e como reagiu.".
 
-Inicie agora com uma saudação natural e humana."""
+- Entrevista Mista: "Me conte sobre um problema técnico que você resolveu trabalhando em equipe. Qual foi seu papel?", "O que você faz quando está sobrecarregado com tarefas?".
+
+- Estudo de Caso: "Imagine que precisa projetar um sistema para alta escalabilidade. Por onde começa?", "Se o cliente mudou o escopo e quer entregar rápido, como prioriza as tarefas?".
+
+Como modelo, seu retorno deve ser:
+
+- Sempre com linguagem natural, espontânea e humana, usando expressões coloquiais e mostrando interesse genuíno.
+- Incluindo reações às respostas do candidato, mostrando compreensão mesmo se a resposta for parcial ou tiver erros, e oferecendo explicações nas falhas: "Sem problema, é normal. Vamos juntar as peças aqui...".
+- Fazendo perguntas de acompanhamento para explorar melhor situações e competências.
+- Encorajando o candidato a compartilhar exemplos práticos, experiências reais e aprendizados.
+- Adaptando as perguntas e comentários ao nível do candidato ({difficulty}) e à área ({job_type}), buscando equilíbrio entre desafio e clareza.
+- Mantendo a conversa fluida e evitando parecer leitura automática de roteiro.
+
+Vamos começar com uma saudação calorosa e uma pergunta simples pra você se sentir à vontade: Me conta um pouco sobre você e sua experiência na área de {job_type}.
+
+Lembre-se: isso é um diálogo, então responda como se estivesse realmente conversando comigo!
+"""
+
 
     return prompt
 
@@ -249,6 +344,13 @@ async def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: 
     try:
         # Criar prompt base
         system_prompt = create_interview_prompt(config, user_profile)
+        
+        # Construir contexto da conversa
+        conversation_context = build_conversation_context(conversation_history)
+        
+        # Combinar prompt base com contexto
+        if conversation_context:
+            system_prompt = system_prompt + "\n\n" + conversation_context
         
         # Construir histórico da conversa com alternância correta
         messages = [{"role": "system", "content": system_prompt}]
