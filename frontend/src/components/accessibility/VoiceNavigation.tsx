@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { Mic, MicOff, Volume2, VolumeX, Navigation, Eye, EyeOff } from 'lucide-react'
-import '@/types/voice'
 
 interface VoiceNavigationProps {
   className?: string
