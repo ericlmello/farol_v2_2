@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
@@ -8,7 +8,7 @@ import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/u
 import { Textarea } from '@/components/ui/Textarea'
 import { interviewChatbotService, InterviewConfig, InterviewSession, ChatMessage, InterviewFeedback } from '@/lib/interviewChatbot'
 
-export default function SimulationActivePage() {
+function SimulationActiveContent() {
   const { user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -444,6 +444,42 @@ export default function SimulationActivePage() {
         </div>
       </div>
     </ProtectedRoute>
+  )
+}
+
+function LoadingFallback() {
+  return (
+    <ProtectedRoute allowedUserTypes={['candidate']}>
+      <div className="p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Carregando Simulação...
+            </h1>
+            <p className="text-muted-foreground">
+              Preparando sua simulação de entrevista
+            </p>
+          </div>
+          
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#061531]"></div>
+                <span className="ml-3 text-gray-600">Carregando...</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </ProtectedRoute>
+  )
+}
+
+export default function SimulationActivePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SimulationActiveContent />
+    </Suspense>
   )
 }
 
