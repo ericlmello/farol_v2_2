@@ -77,7 +77,7 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
       )
     },
     {
-      name: 'Entrevista (Realtime)',
+      name: 'Entrevista',
       href: '/realtime-interview',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
       )
     },
     {
-      name: 'Simulação em Andamento',
+      name: 'Simulação Farol IA',
       href: '/simulation',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

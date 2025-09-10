@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui'
+import { api } from '@/lib/api'
 import Link from 'next/link'
 
 // Interface para o histórico de feedback
@@ -97,19 +98,8 @@ export default function FeedbackPage() {
         return
       }
 
-      const response = await fetch('/api/v1/simulations/history', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || 'Erro ao carregar histórico de feedback')
-      }
-
-      const data = await response.json()
+      const response = await api.get('/simulations/history')
+      const data = response.data
       
       // Converter os dados da API para o formato esperado
       const formattedHistory = data.simulations.map((sim: any) => ({

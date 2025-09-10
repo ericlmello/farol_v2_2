@@ -49,7 +49,7 @@ export interface InterviewFeedback {
 }
 
 class InterviewChatbotService {
-  private baseUrl = '/api/v1/interview-chatbot'
+  private baseUrl = '/interview-chatbot'
 
   async startInterview(config: InterviewConfig): Promise<InterviewSession> {
     try {
