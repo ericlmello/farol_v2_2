@@ -2,7 +2,6 @@
 
 import { ReactNode, useState } from 'react'
 import { Sidebar } from '@/components/layout/Sidebar'
-import { FarolAssistant } from '@/components/FarolAssistant'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -22,9 +21,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
       }`}>
         {children}
       </main>
-      
-      {/* Assistente de voz Farol - apenas na área logada */}
-      <FarolAssistant />
     </div>
   )
 }
