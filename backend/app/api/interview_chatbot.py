@@ -111,7 +111,7 @@ def validate_message_alternation(messages: List[dict]) -> List[dict]:
     return validated_messages
 
 def build_conversation_context(conversation_history: List[dict] = None) -> str:
-    """Constrói um resumo do contexto da conversa para o modelo"""
+    """Constrói um resumo do contexto da conversa para o modelo - genérico para qualquer área"""
     if not conversation_history or len(conversation_history) == 0:
         return ""
     
@@ -124,82 +124,102 @@ def build_conversation_context(conversation_history: List[dict] = None) -> str:
         context_parts.append("CONTEXTO DA CONVERSA ATÉ AGORA:")
         context_parts.append("")
         
-        # Extrair informações sobre experiência
-        experience_keywords = ["trabalho", "experiência", "projeto", "empresa", "anos", "desenvolvi", "criei", "implementei", "participei", "liderei", "gerenciei", "coordinatei"]
+        # Extrair informações sobre experiência profissional (genérico)
+        experience_keywords = ["trabalho", "experiência", "projeto", "empresa", "anos", "desenvolvi", "criei", "implementei", "participei", "liderei", "gerenciei", "coordinatei", "atuo", "atuou", "responsável", "responsável por", "cargo", "posição", "função"]
         experience_mentions = []
         
-        # Extrair informações sobre tecnologias
-        tech_keywords = ["python", "javascript", "react", "node", "java", "c#", "sql", "mongodb", "docker", "aws", "api", "fastapi", "typescript", "vue", "angular", "spring", "django", "flask", "kubernetes", "azure", "gcp", "redis", "postgresql", "mysql"]
-        tech_mentions = []
+        # Extrair informações sobre habilidades/competências (genérico)
+        skills_keywords = ["habilidade", "competência", "conhecimento", "domínio", "experiência com", "trabalho com", "uso", "utilizo", "aplico", "conheço", "sei", "posso", "consigo", "especialização", "expertise"]
+        skills_mentions = []
         
-        # Extrair informações sobre desafios/problemas
-        challenge_keywords = ["desafio", "problema", "bug", "erro", "dificuldade", "resolvi", "superei", "conflito", "pressão", "prazo", "escalabilidade", "performance"]
-        challenge_mentions = []
+        # Extrair informações sobre desafios/resultados (genérico)
+        achievement_keywords = ["desafio", "problema", "resultado", "conquista", "sucesso", "melhoria", "resolvi", "superei", "consegui", "alcancei", "obtive", "reduzi", "aumentei", "otimizei", "implementei", "criei", "desenvolvi"]
+        achievement_mentions = []
         
-        # Extrair informações sobre soft skills
-        soft_skills_keywords = ["equipe", "time", "liderança", "comunicação", "colaboração", "mentoria", "feedback", "aprendizado", "crescimento"]
+        # Extrair informações sobre soft skills (genérico)
+        soft_skills_keywords = ["equipe", "time", "liderança", "comunicação", "colaboração", "mentoria", "feedback", "aprendizado", "crescimento", "relacionamento", "negociação", "vendas", "atendimento", "gestão", "coordenação", "motivação", "criatividade", "inovação"]
         soft_skills_mentions = []
+        
+        # Extrair informações sobre educação/formacao (genérico)
+        education_keywords = ["curso", "formação", "graduação", "pós", "mestrado", "doutorado", "certificação", "treinamento", "workshop", "seminário", "universidade", "faculdade", "escola", "instituição", "aprendi", "estudei", "formação em"]
+        education_mentions = []
         
         for response in candidate_responses:
             content = response.get("content", "").lower()
+            full_content = response.get("content", "")
             
             # Verificar menções de experiência
             for keyword in experience_keywords:
                 if keyword in content:
-                    experience_mentions.append(response.get("content", "")[:100] + "...")
+                    experience_mentions.append(full_content[:120] + "...")
                     break
             
-            # Verificar menções de tecnologias
-            for keyword in tech_keywords:
+            # Verificar menções de habilidades
+            for keyword in skills_keywords:
                 if keyword in content:
-                    tech_mentions.append(keyword)
+                    skills_mentions.append(full_content[:120] + "...")
+                    break
             
-            # Verificar menções de desafios
-            for keyword in challenge_keywords:
+            # Verificar menções de conquistas/resultados
+            for keyword in achievement_keywords:
                 if keyword in content:
-                    challenge_mentions.append(response.get("content", "")[:100] + "...")
+                    achievement_mentions.append(full_content[:120] + "...")
                     break
             
             # Verificar menções de soft skills
             for keyword in soft_skills_keywords:
                 if keyword in content:
-                    soft_skills_mentions.append(response.get("content", "")[:100] + "...")
+                    soft_skills_mentions.append(full_content[:120] + "...")
+                    break
+            
+            # Verificar menções de educação
+            for keyword in education_keywords:
+                if keyword in content:
+                    education_mentions.append(full_content[:120] + "...")
                     break
         
-        # Construir resumo
+        # Construir resumo genérico
         if experience_mentions:
-            context_parts.append("EXPERIÊNCIA MENCIONADA PELO CANDIDATO:")
+            context_parts.append("EXPERIÊNCIA PROFISSIONAL MENCIONADA:")
             for mention in experience_mentions[:3]:  # Limitar a 3 menções
                 context_parts.append(f"- {mention}")
             context_parts.append("")
         
-        if tech_mentions:
-            context_parts.append("TECNOLOGIAS MENCIONADAS:")
-            context_parts.append(f"- {', '.join(set(tech_mentions))}")
+        if skills_mentions:
+            context_parts.append("HABILIDADES/COMPETÊNCIAS MENCIONADAS:")
+            for mention in skills_mentions[:3]:  # Limitar a 3 menções
+                context_parts.append(f"- {mention}")
             context_parts.append("")
         
-        if challenge_mentions:
-            context_parts.append("DESAFIOS/PROBLEMAS MENCIONADOS:")
-            for mention in challenge_mentions[:2]:  # Limitar a 2 menções
+        if achievement_mentions:
+            context_parts.append("CONQUISTAS/RESULTADOS MENCIONADOS:")
+            for mention in achievement_mentions[:2]:  # Limitar a 2 menções
                 context_parts.append(f"- {mention}")
             context_parts.append("")
         
         if soft_skills_mentions:
-            context_parts.append("SOFT SKILLS/HABILIDADES INTERPESSOAIS MENCIONADAS:")
+            context_parts.append("HABILIDADES INTERPESSOAIS MENCIONADAS:")
             for mention in soft_skills_mentions[:2]:  # Limitar a 2 menções
                 context_parts.append(f"- {mention}")
             context_parts.append("")
         
-        # Adicionar instruções para usar o contexto
+        if education_mentions:
+            context_parts.append("FORMAÇÃO/EDUCAÇÃO MENCIONADA:")
+            for mention in education_mentions[:2]:  # Limitar a 2 menções
+                context_parts.append(f"- {mention}")
+            context_parts.append("")
+        
+        # Adicionar instruções genéricas para usar o contexto
         context_parts.append("INSTRUÇÕES PARA USAR O CONTEXTO:")
         context_parts.append("- Use essas informações para fazer perguntas de follow-up relevantes")
-        context_parts.append("- Referencie experiências mencionadas pelo candidato")
+        context_parts.append("- Referencie experiências e competências mencionadas pelo candidato")
         context_parts.append("- Faça conexões entre diferentes pontos da conversa")
         context_parts.append("- Demonstre que está prestando atenção ao que foi dito")
         context_parts.append("- Evite repetir perguntas sobre tópicos já abordados")
-        context_parts.append("- Use frases como: 'Você mencionou que...', 'Falando sobre o que você disse...', 'Baseado na sua experiência com...'")
+        context_parts.append("- Use frases como: 'Você mencionou que...', 'Falando sobre o que você disse...', 'Baseado na sua experiência...'")
         context_parts.append("- Faça perguntas que aprofundem os tópicos já mencionados")
         context_parts.append("- Mostre interesse genuíno pelas experiências compartilhadas")
+        context_parts.append("- Adapte as perguntas à área profissional do candidato")
         context_parts.append("")
     
     return "\n".join(context_parts)
@@ -209,8 +229,9 @@ def determine_job_type_from_focus_areas(focus_areas: List[str]) -> str:
     if not focus_areas:
         return "vaga profissional"
     
-    # Mapear áreas de foco para tipos de vaga
+    # Mapear áreas de foco para tipos de vaga (genérico)
     job_type_mapping = {
+        # Tecnologia
         "frontend": "Desenvolvedor Frontend",
         "backend": "Desenvolvedor Backend", 
         "fullstack": "Desenvolvedor Full Stack",
@@ -218,7 +239,17 @@ def determine_job_type_from_focus_areas(focus_areas: List[str]) -> str:
         "devops": "Especialista DevOps",
         "data": "Cientista de Dados",
         "ai": "Especialista em IA/ML",
-        "security": "Especialista em Segurança"
+        "security": "Especialista em Segurança",
+        
+        # Outras áreas (exemplos genéricos)
+        "marketing": "Profissional de Marketing",
+        "vendas": "Profissional de Vendas",
+        "rh": "Profissional de Recursos Humanos",
+        "financeiro": "Profissional Financeiro",
+        "comercial": "Profissional Comercial",
+        "operacional": "Profissional Operacional",
+        "gerencial": "Profissional Gerencial",
+        "administrativo": "Profissional Administrativo"
     }
     
     # Se há múltiplas áreas, criar descrição combinada
@@ -235,8 +266,14 @@ def determine_job_type_from_focus_areas(focus_areas: List[str]) -> str:
             return "Desenvolvedor Full Stack"
         elif "data" in focus_areas and "ai" in focus_areas:
             return "Especialista em Data Science e IA"
+        elif "marketing" in focus_areas and "vendas" in focus_areas:
+            return "Profissional de Marketing e Vendas"
+        elif "gerencial" in focus_areas and "operacional" in focus_areas:
+            return "Profissional Gerencial e Operacional"
         else:
-            return "vaga multidisciplinar em tecnologia"
+            # Para qualquer combinação, criar descrição genérica
+            types = [job_type_mapping.get(area, area) for area in focus_areas[:2]]  # Limitar a 2
+            return f"vaga multidisciplinar ({' e '.join(types)})"
 
 def create_interview_prompt(config: SimulationConfig, user_profile: dict = None) -> str:
     """Cria um prompt personalizado baseado na configuração da simulação"""
