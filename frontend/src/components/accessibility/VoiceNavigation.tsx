@@ -262,7 +262,10 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ className = '' }) => 
     const links = document.querySelectorAll('a')
     
     // Procurar por botão ou link que corresponda ao comando
-    const allElements = [...buttons, ...links]
+    const allElements: (HTMLButtonElement | HTMLAnchorElement)[] = [
+      ...Array.from(buttons),
+      ...Array.from(links)
+    ]
     
     for (const element of allElements) {
       const text = element.textContent?.toLowerCase() || ''
