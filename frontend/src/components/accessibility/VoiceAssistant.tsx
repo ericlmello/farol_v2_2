@@ -1,98 +1,56 @@
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { Mic, MicOff, Volume2, VolumeX, Eye, Loader2 } from 'lucide-react'
+import { Mic, MicOff, Volume2, VolumeX, Eye, Loader2, Navigation, HelpCircle, Settings } from 'lucide-react'
 import { voiceDescriptionService } from '@/services/voiceDescriptionService'
+import { useAccessibility } from './AccessibilityProvider'
 
 interface VoiceAssistantProps {
   className?: string
 }
 
 export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) {
-  const [isListening, setIsListening] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
+  // Usar contexto de acessibilidade integrado
+  const accessibility = useAccessibility()
+  
+  // Estados locais específicos do assistente
   const [isProcessing, setIsProcessing] = useState(false)
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null)
-  const [lastCommand, setLastCommand] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
   const [showWakeWordInfo, setShowWakeWordInfo] = useState(false)
   
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  
+  // Usar estados do contexto
+  const {
+    isListening,
+    isMuted,
+    lastCommand,
+    isVoiceModeActive,
+    startListening,
+    stopListening,
+    toggleMute,
+    speak,
+    describeCurrentPage: contextDescribePage,
+    toggleVoiceMode,
+    handleVoiceCommand
+  } = accessibility
 
-  // Inicializar SpeechRecognition
+  // Ativar modo de voz automaticamente ao inicializar
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      if (SpeechRecognition) {
-        const recognitionInstance = new SpeechRecognition()
-        recognitionInstance.continuous = true
-        recognitionInstance.interimResults = false
-        recognitionInstance.lang = 'pt-BR'
-        
-        recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
-          const transcript = Array.from(event.results)
-            .map(result => result[0])
-            .map(result => result.transcript)
-            .join('')
-            .toLowerCase()
-          
-          setLastCommand(transcript)
-          handleVoiceCommand(transcript)
-        }
-
-        recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
-          console.error('Erro no reconhecimento:', event.error)
-          setIsListening(false)
-        }
-
-        recognitionInstance.onend = () => {
-          setIsListening(false)
-        }
-
-        setRecognition(recognitionInstance)
-        recognitionRef.current = recognitionInstance
-      }
+    if (!isVoiceModeActive) {
+      toggleVoiceMode()
     }
   }, [])
 
-  const speak = useCallback((text: string) => {
-    if (isMuted || !text) return
-    
-    if (audioRef.current) {
-      audioRef.current.pause()
-    }
-
-    // Usar síntese de voz nativa como fallback
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = 'pt-BR'
-      utterance.rate = 0.9
-      utterance.pitch = 1
-      speechSynthesis.speak(utterance)
-    }
-  }, [isMuted])
-
-  const handleVoiceCommand = useCallback(async (command: string) => {
-    console.log('Comando recebido:', command)
-    
-    // Comandos de wake word
-    if (command.includes('descrever') || command.includes('descreva') || command.includes('falar sobre a página')) {
-      await describeCurrentPage()
-    } else if (command.includes('ajuda') || command.includes('comandos')) {
-      showHelp()
-    } else if (command.includes('parar') || command.includes('sair')) {
-      stopListening()
-    }
-  }, [])
-
-  const describeCurrentPage = useCallback(async () => {
+  // Função integrada para descrição de página com fallback
+  const enhancedDescribePage = useCallback(async () => {
     if (isProcessing) return
     
     setIsProcessing(true)
     speak('Descrevendo a página atual...')
     
     try {
+      // Tentar usar o serviço de descrição avançado
       const currentUrl = window.location.href
       const data = await voiceDescriptionService.describePage(currentUrl)
       
@@ -116,70 +74,45 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
         audio.onerror = (error) => {
           console.error('Erro ao reproduzir áudio:', error)
           speak('Erro ao reproduzir áudio. Usando descrição textual.')
-          // Fallback para síntese de voz nativa
-          speak(data.descricao || 'Descrição da página disponível.')
+          // Fallback para descrição do contexto
+          contextDescribePage()
         }
       } else {
-        // Fallback para síntese de voz nativa
-        speak(data.descricao || 'Erro ao gerar descrição da página.')
+        // Fallback para descrição do contexto
+        contextDescribePage()
       }
     } catch (error) {
       console.error('Erro ao descrever página:', error)
       
-      // Tratamento específico de erros
-      if (error instanceof Error) {
-        if (error.message.includes('500')) {
-          speak('Servidor temporariamente indisponível. Tente novamente em alguns momentos.')
-        } else if (error.message.includes('404')) {
-          speak('Serviço de descrição não encontrado. Verifique a configuração.')
-        } else if (error.message.includes('Network')) {
-          speak('Problema de conexão. Verifique sua internet.')
-        } else {
-          speak('Desculpe, não foi possível descrever a página no momento.')
-        }
-      } else {
-        speak('Desculpe, ocorreu um erro inesperado.')
-      }
+      // Fallback para descrição do contexto
+      speak('Usando descrição básica da página...')
+      contextDescribePage()
     } finally {
       setIsProcessing(false)
     }
-  }, [isProcessing, speak])
+  }, [isProcessing, speak, contextDescribePage])
 
+  // Função de ajuda integrada
   const showHelp = useCallback(() => {
     const helpText = `
-      Comandos disponíveis:
+      Assistente de Voz Farol - Comandos disponíveis:
       - "Descrever página" ou "Descreva a página" para obter uma descrição completa
       - "Ajuda" ou "Comandos" para ouvir esta lista
       - "Parar" ou "Sair" para parar a escuta
+      - "Ir para [página]" para navegar
+      - "Botão [nome]" para clicar em botões
+      
+      Páginas disponíveis:
+      - "Início" para página inicial
+      - "Perfil" para seu perfil
+      - "Simulação" para entrevistas
+      - "Desenvolvimento" para cursos
     `
     speak(helpText)
     setShowWakeWordInfo(false)
   }, [speak])
 
-  const startListening = useCallback(() => {
-    if (recognitionRef.current && !isListening) {
-      recognitionRef.current.start()
-      setIsListening(true)
-      speak('Escutando...')
-    }
-  }, [isListening, speak])
-
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop()
-      setIsListening(false)
-      speak('Parando escuta.')
-    }
-  }, [isListening, speak])
-
-  const toggleMute = useCallback(() => {
-    setIsMuted(!isMuted)
-    if (audioRef.current) {
-      audioRef.current.pause()
-    }
-    speechSynthesis.cancel()
-  }, [isMuted])
-
+  // Funções de controle da interface
   const toggleExpanded = useCallback(() => {
     setIsExpanded(!isExpanded)
     setShowWakeWordInfo(false)
@@ -283,11 +216,21 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
 
             {/* Comando rápido */}
             <button
-              onClick={describeCurrentPage}
+              onClick={enhancedDescribePage}
               disabled={isProcessing}
               className="w-full px-3 py-2 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded text-sm font-medium transition-colors disabled:opacity-50"
             >
-              {isProcessing ? 'Processando...' : 'Descrever Página'}
+              {isProcessing ? (
+                <>
+                  <Loader2 className="w-4 h-4 inline mr-1 animate-spin" />
+                  Processando...
+                </>
+              ) : (
+                <>
+                  <Eye className="w-4 h-4 inline mr-1" />
+                  Descrever Página
+                </>
+              )}
             </button>
 
             {/* Ajuda */}
