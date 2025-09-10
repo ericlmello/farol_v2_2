@@ -15,6 +15,7 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null)
   const [lastCommand, setLastCommand] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
+  const [showWakeWordInfo, setShowWakeWordInfo] = useState(false)
   
   const recognitionRef = useRef<SpeechRecognition | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -124,6 +125,7 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
       - "Parar" ou "Sair" para parar a escuta
     `
     speak(helpText)
+    setShowWakeWordInfo(false)
   }, [speak])
 
   const startListening = useCallback(() => {
@@ -152,7 +154,12 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
 
   const toggleExpanded = useCallback(() => {
     setIsExpanded(!isExpanded)
+    setShowWakeWordInfo(false)
   }, [isExpanded])
+
+  const toggleWakeWordInfo = useCallback(() => {
+    setShowWakeWordInfo(!showWakeWordInfo)
+  }, [showWakeWordInfo])
 
   return (
     <div className={`fixed bottom-4 right-4 z-50 ${className}`}>
@@ -262,6 +269,27 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
             >
               Ajuda
             </button>
+
+            {/* Informações do Wake Word */}
+            <button
+              onClick={toggleWakeWordInfo}
+              className="w-full px-3 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded text-sm font-medium transition-colors"
+            >
+              {showWakeWordInfo ? 'Ocultar' : 'Mostrar'} Wake Word
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Informações do Wake Word */}
+      {showWakeWordInfo && (
+        <div className="absolute bottom-20 right-0 bg-blue-50 dark:bg-blue-900 rounded-lg shadow-lg p-3 w-64 border border-blue-200 dark:border-blue-700">
+          <div className="text-xs text-blue-800 dark:text-blue-200">
+            <div className="font-semibold mb-1">Wake Word Ativo:</div>
+            <div>Diga "Descrever página" para ativar</div>
+            <div className="mt-1 text-blue-600 dark:text-blue-300">
+              Funciona quando o botão está ativo
+            </div>
           </div>
         </div>
       )}

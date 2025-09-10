@@ -3,8 +3,6 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider'
-import AccessibilityBar from '@/components/accessibility/AccessibilityBar'
-import AccessibilityOverlay from '@/components/accessibility/AccessibilityOverlay'
 import VoiceAssistant from '@/components/accessibility/VoiceAssistant'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -24,10 +22,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
         <AccessibilityProvider>
-          <AccessibilityBar />
-          <AccessibilityOverlay />
           <VoiceAssistant />
-          <div className="pt-16">
+          <div>
             {children}
           </div>
         </AccessibilityProvider>
