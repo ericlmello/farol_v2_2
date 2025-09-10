@@ -5,6 +5,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider'
 import AccessibilityBar from '@/components/accessibility/AccessibilityBar'
 import AccessibilityOverlay from '@/components/accessibility/AccessibilityOverlay'
+import VoiceAssistant from '@/components/accessibility/VoiceAssistant'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,13 +23,14 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          <AccessibilityProvider>
-            <AccessibilityBar />
-            <AccessibilityOverlay />
-            <div className="pt-16">
-              {children}
-            </div>
-          </AccessibilityProvider>
+        <AccessibilityProvider>
+          <AccessibilityBar />
+          <AccessibilityOverlay />
+          <VoiceAssistant />
+          <div className="pt-16">
+            {children}
+          </div>
+        </AccessibilityProvider>
         </AuthProvider>
       </body>
     </html>
