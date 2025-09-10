@@ -26,6 +26,15 @@ async def call_perplexity_api(messages: List[dict], model: str = "sonar-pro") ->
     if not API_KEY:
         raise ValueError("PERPLEXITY_API_KEY não configurada")
     
+    # Validar formato das mensagens
+    for i, msg in enumerate(messages):
+        if not isinstance(msg, dict) or "role" not in msg or "content" not in msg:
+            raise ValueError(f"Mensagem {i} inválida: {msg}")
+        if msg["role"] not in ["system", "user", "assistant"]:
+            raise ValueError(f"Role inválida na mensagem {i}: {msg['role']}")
+        if not isinstance(msg["content"], str) or not msg["content"].strip():
+            raise ValueError(f"Conteúdo inválido na mensagem {i}: {msg['content']}")
+    
     url = "https://api.perplexity.ai/chat/completions"
     headers = {
         "Authorization": f"Bearer {API_KEY}",
@@ -48,10 +57,14 @@ async def call_perplexity_api(messages: List[dict], model: str = "sonar-pro") ->
             return data["choices"][0]["message"]["content"]
             
     except httpx.HTTPStatusError as e:
-        print(f"Erro HTTP na API Perplexity: {e.response.status_code} - {e.response.text}")
-        raise Exception(f"Erro na API Perplexity: {e.response.status_code}")
+        error_detail = e.response.text
+        print(f"Erro HTTP na API Perplexity: {e.response.status_code}")
+        print(f"Detalhes do erro: {error_detail}")
+        print(f"Payload enviado: {json.dumps(payload, indent=2, ensure_ascii=False)}")
+        raise Exception(f"Erro na API Perplexity ({e.response.status_code}): {error_detail}")
     except Exception as e:
         print(f"Erro ao chamar API Perplexity: {e}")
+        print(f"Payload enviado: {json.dumps(payload, indent=2, ensure_ascii=False)}")
         raise Exception(f"Erro técnico: {str(e)}")
 
 def create_interview_prompt(config: SimulationConfig, user_profile: dict = None) -> str:
@@ -156,23 +169,34 @@ async def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: 
         # Adicionar histórico da conversa se disponível
         if conversation_history:
             for msg in conversation_history[-10:]:  # Manter apenas últimas 10 mensagens
-                messages.append({
-                    "role": "user" if msg["role"] == "candidate" else "assistant",
-                    "content": msg["content"]
-                })
+                # Validar formato da mensagem do histórico
+                if isinstance(msg, dict) and "role" in msg and "content" in msg:
+                    role = "user" if msg["role"] == "candidate" else "assistant"
+                    content = str(msg["content"]).strip()
+                    if content:  # Só adicionar se houver conteúdo
+                        messages.append({
+                            "role": role,
+                            "content": content
+                        })
         
         # Adicionar pergunta atual
         messages.append({"role": "user", "content": pergunta})
         
+        # Debug: Log das mensagens antes de enviar
+        print(f"Enviando {len(messages)} mensagens para a API Perplexity")
+        for i, msg in enumerate(messages):
+            print(f"Mensagem {i}: {msg['role']} - {msg['content'][:100]}...")
+        
         # Usar a nova função de chamada direta
         try:
-            response = await call_perplexity_api(messages, "sonar-pro")
+            # Tentar primeiro com modelo mais estável
+            response = await call_perplexity_api(messages, "llama-3.1-sonar-small-128k-online")
             return response
         except Exception as e:
             print(f"Erro na chamada da API: {e}")
-            # Fallback: tentar com modelo diferente
+            # Fallback: tentar com modelo sonar-pro
             try:
-                response = await call_perplexity_api(messages, "llama-3.1-sonar-small-128k-online")
+                response = await call_perplexity_api(messages, "sonar-pro")
                 return response
             except Exception as e2:
                 print(f"Erro no fallback: {e2}")
