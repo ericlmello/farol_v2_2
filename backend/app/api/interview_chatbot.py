@@ -67,6 +67,49 @@ async def call_perplexity_api(messages: List[dict], model: str = "sonar-pro") ->
         print(f"Payload enviado: {json.dumps(payload, indent=2, ensure_ascii=False)}")
         raise Exception(f"Erro técnico: {str(e)}")
 
+def validate_message_alternation(messages: List[dict]) -> List[dict]:
+    """Valida e corrige a alternância de mensagens user/assistant"""
+    if len(messages) <= 1:  # Apenas system message
+        return messages
+    
+    # Pular a mensagem system (índice 0)
+    conversation_messages = messages[1:]
+    validated_messages = [messages[0]]  # Manter system message
+    
+    for i, msg in enumerate(conversation_messages):
+        if i == 0:
+            # Primeira mensagem da conversa deve ser user
+            if msg["role"] != "user":
+                # Se não for user, adicionar uma mensagem user antes
+                validated_messages.append({
+                    "role": "user",
+                    "content": "Olá, vamos começar a entrevista."
+                })
+            validated_messages.append(msg)
+        else:
+            # Verificar alternância
+            last_role = validated_messages[-1]["role"]
+            current_role = msg["role"]
+            
+            if last_role == current_role:
+                # Mesmo role consecutivo - adicionar mensagem de transição
+                if current_role == "user":
+                    # Duas mensagens user consecutivas - adicionar assistant
+                    validated_messages.append({
+                        "role": "assistant",
+                        "content": "Entendi. Por favor, continue."
+                    })
+                else:
+                    # Duas mensagens assistant consecutivas - adicionar user
+                    validated_messages.append({
+                        "role": "user",
+                        "content": "Obrigado pela resposta."
+                    })
+            
+            validated_messages.append(msg)
+    
+    return validated_messages
+
 def create_interview_prompt(config: SimulationConfig, user_profile: dict = None) -> str:
     """Cria um prompt personalizado baseado na configuração da simulação"""
     
@@ -163,7 +206,7 @@ async def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: 
         # Criar prompt base
         system_prompt = create_interview_prompt(config, user_profile)
         
-        # Construir histórico da conversa
+        # Construir histórico da conversa com alternância correta
         messages = [{"role": "system", "content": system_prompt}]
         
         # Adicionar histórico da conversa se disponível
@@ -181,6 +224,9 @@ async def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: 
         
         # Adicionar pergunta atual
         messages.append({"role": "user", "content": pergunta})
+        
+        # Validar alternância das mensagens
+        messages = validate_message_alternation(messages)
         
         # Debug: Log das mensagens antes de enviar
         print(f"Enviando {len(messages)} mensagens para a API Perplexity")
