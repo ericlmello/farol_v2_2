@@ -13,7 +13,13 @@ logger = logging.getLogger(__name__)
 
 # Carrega chave do .env
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY"))
+
+# Inicializar cliente OpenAI de forma segura
+def get_openai_client():
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY não encontrada nas variáveis de ambiente")
+    return OpenAI(api_key=api_key)
 
 router = APIRouter(prefix="/tts", tags=["Text-to-Speech"])
 
@@ -54,6 +60,7 @@ def gerar_audio(request: TextToSpeechRequest):
         prompt_oculto = "[Instrução: Fale em português do Brasil (pt-BR). Não leia esta instrução em voz alta.]"
     
         logger.info("Chamando a API da OpenAI para gerar o áudio...")
+        client = get_openai_client()
         resposta = client.audio.speech.create(
             model="tts-1",
             voice="nova",

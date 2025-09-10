@@ -31,6 +31,10 @@ def main():
         print("❌ Falha ao instalar dependências")
         sys.exit(1)
     
+    # 1.1. Instalar browsers do Playwright
+    if not run_command("python install_playwright.py", "Instalando browsers do Playwright"):
+        print("⚠️  Aviso: Falha ao instalar browsers do Playwright, continuando...")
+    
     # 2. Aguardar banco de dados estar disponível
     print("🔄 Aguardando banco de dados...")
     max_retries = 30

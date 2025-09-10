@@ -9,7 +9,13 @@ from dotenv import load_dotenv
 
 # Carrega chave do .env
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY"))
+
+# Inicializar cliente OpenAI de forma segura
+def get_openai_client():
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY não encontrada nas variáveis de ambiente")
+    return OpenAI(api_key=api_key)
 
 router = APIRouter(prefix="/describe", tags=["Descrição de Imagens"])
 
@@ -100,6 +106,7 @@ def descrever_imagem_(caminho_imagem: str, prompt_extra: str | None = None) -> s
 
     data_url = f"data:{mime};base64,{base64.b64encode(img_bytes).decode('utf-8')}"
     try:
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[

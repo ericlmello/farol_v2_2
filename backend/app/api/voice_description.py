@@ -17,7 +17,13 @@ logger = logging.getLogger(__name__)
 
 # Carrega chave do .env
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY"))
+
+# Inicializar cliente OpenAI de forma segura
+def get_openai_client():
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY não encontrada nas variáveis de ambiente")
+    return OpenAI(api_key=api_key)
 
 router = APIRouter(prefix="/voice-description", tags=["Voice Description"])
 
@@ -127,6 +133,7 @@ def descrever_imagem_com_llm(caminho_imagem: str) -> str:
 
         data_url = f"data:{mime};base64,{base64.b64encode(img_bytes).decode('utf-8')}"
         
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -155,6 +162,7 @@ def gerar_audio_com_openai(texto: str) -> str:
     try:
         texto_final = aplicar_regras_fala(texto)
         
+        client = get_openai_client()
         resposta = client.audio.speech.create(
             model="tts-1",
             voice="nova",
