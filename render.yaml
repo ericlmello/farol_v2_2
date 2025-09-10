@@ -38,7 +38,7 @@ services:
     rootDir: ./frontend
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        value: https://farol-backend.onrender.com
+        value: https://farol-backend.onrender.com/api/v1
       - key: NODE_ENV
         value: production
       - key: RENDER

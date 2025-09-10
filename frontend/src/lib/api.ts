@@ -2,14 +2,18 @@ import axios from 'axios'
 
 // Configuração para diferentes ambientes
 const getApiBaseUrl = () => {
-  // Em desenvolvimento local, usar localhost
+  // Prioridade 1: Variável de ambiente NEXT_PUBLIC_API_URL (para produção)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL
+  }
+  
+  // Prioridade 2: Desenvolvimento local
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:8000/api/v1'
   }
   
-  // Em produção, usar proxy local para evitar CORS
-  // O Next.js vai fazer o proxy para o backend
-  return '/api/v1'
+  // Fallback: URL padrão do backend em produção
+  return 'https://farol-backend.onrender.com/api/v1'
 }
 
 const API_BASE_URL = getApiBaseUrl()
@@ -18,8 +22,9 @@ const API_BASE_URL = getApiBaseUrl()
 if (typeof window !== 'undefined') {
   console.log('🔗 API Base URL:', API_BASE_URL)
   console.log('🔗 NODE_ENV:', process.env.NODE_ENV)
+  console.log('🔗 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL)
   console.log('🔗 RENDER:', process.env.RENDER)
-  console.log('🔗 Usando proxy:', process.env.NODE_ENV === 'production' ? 'Sim' : 'Não')
+  console.log('🔗 Usando URL absoluta:', process.env.NEXT_PUBLIC_API_URL ? 'Sim' : 'Não')
 }
 
 export const api = axios.create({
