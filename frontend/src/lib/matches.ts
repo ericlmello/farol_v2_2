@@ -21,7 +21,7 @@ export interface MatchResponse {
 }
 
 export const matchesService = {
-  async getMatches(): Promise<MatchResponse> {
+  async getMatches(): Promise<Match[]> {
     const response = await api.get('/matches/')
     return response.data
   }
