@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { AccessibilityProvider } from '@/components/accessibility/AccessibilityProvider'
+import AccessibilityBar from '@/components/accessibility/AccessibilityBar'
+import AccessibilityOverlay from '@/components/accessibility/AccessibilityOverlay'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,7 +22,13 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          {children}
+          <AccessibilityProvider>
+            <AccessibilityBar />
+            <AccessibilityOverlay />
+            <div className="pt-16">
+              {children}
+            </div>
+          </AccessibilityProvider>
         </AuthProvider>
       </body>
     </html>
