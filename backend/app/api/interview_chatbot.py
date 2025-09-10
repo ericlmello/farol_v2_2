@@ -20,10 +20,19 @@ router = APIRouter(prefix="/interview-chatbot", tags=["interview-chatbot"])
 API_KEY = os.getenv("PERPLEXITY_API_KEY")
 
 # Configurar o cliente OpenAI para usar a API da Perplexity
-client = openai.OpenAI(
-    api_key=API_KEY,
-    base_url="https://api.perplexity.ai"
-)
+def get_perplexity_client():
+    """Cria cliente OpenAI para Perplexity com tratamento de erro"""
+    if not API_KEY:
+        raise ValueError("PERPLEXITY_API_KEY não configurada")
+    
+    try:
+        return openai.OpenAI(
+            api_key=API_KEY,
+            base_url="https://api.perplexity.ai"
+        )
+    except Exception as e:
+        print(f"Erro ao criar cliente Perplexity: {e}")
+        raise
 
 def create_interview_prompt(config: SimulationConfig, user_profile: dict = None) -> str:
     """Cria um prompt personalizado baseado na configuração da simulação"""
@@ -135,6 +144,7 @@ def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: dict =
         # Adicionar pergunta atual
         messages.append({"role": "user", "content": pergunta})
         
+        client = get_perplexity_client()
         response = client.chat.completions.create(
             model="sonar-pro",  # Modelo mais atual da Perplexity
             messages=messages,
