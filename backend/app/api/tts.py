@@ -1,11 +1,12 @@
 from fastapi import APIRouter, HTTPException, Response
-from openai import OpenAI, APIError
+from openai import APIError
 from pydantic import BaseModel, Field
 import os
 from dotenv import load_dotenv
 import logging
 import uuid
 from pathlib import Path
+from ..utils.openai_client import get_openai_client
 
 # Configura o logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -13,28 +14,6 @@ logger = logging.getLogger(__name__)
 
 # Carrega chave do .env
 load_dotenv()
-
-# Inicializar cliente OpenAI de forma segura
-def get_openai_client():
-    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY não encontrada nas variáveis de ambiente")
-    
-    try:
-        # Tentar inicializar com configurações mínimas
-        return OpenAI(api_key=api_key)
-    except Exception as e:
-        logger.error(f"Erro ao inicializar cliente OpenAI: {e}")
-        # Fallback: tentar com configurações explícitas
-        try:
-            import httpx
-            return OpenAI(
-                api_key=api_key,
-                http_client=httpx.Client(timeout=30.0)
-            )
-        except Exception as e2:
-            logger.error(f"Erro no fallback OpenAI: {e2}")
-            raise HTTPException(status_code=500, detail="Erro ao inicializar cliente OpenAI")
 
 router = APIRouter(prefix="/tts", tags=["Text-to-Speech"])
 

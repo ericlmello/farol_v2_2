@@ -1,4 +1,4 @@
-import { api } from './api'
+import { api } from '@/lib/api'
 
 export interface LoginRequest {
   username: string // O backend espera 'username' para o OAuth2PasswordRequestForm

@@ -100,10 +100,24 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
         // Reproduzir áudio gerado
         const audio = new Audio(data.audio_url)
         audioRef.current = audio
-        audio.play()
+        
+        audio.onloadstart = () => {
+          speak('Carregando descrição...')
+        }
+        
+        audio.oncanplaythrough = () => {
+          audio.play()
+        }
         
         audio.onended = () => {
           speak('Descrição concluída.')
+        }
+        
+        audio.onerror = (error) => {
+          console.error('Erro ao reproduzir áudio:', error)
+          speak('Erro ao reproduzir áudio. Usando descrição textual.')
+          // Fallback para síntese de voz nativa
+          speak(data.descricao || 'Descrição da página disponível.')
         }
       } else {
         // Fallback para síntese de voz nativa
@@ -111,7 +125,21 @@ export default function VoiceAssistant({ className = '' }: VoiceAssistantProps) 
       }
     } catch (error) {
       console.error('Erro ao descrever página:', error)
-      speak('Desculpe, não foi possível descrever a página no momento.')
+      
+      // Tratamento específico de erros
+      if (error instanceof Error) {
+        if (error.message.includes('500')) {
+          speak('Servidor temporariamente indisponível. Tente novamente em alguns momentos.')
+        } else if (error.message.includes('404')) {
+          speak('Serviço de descrição não encontrado. Verifique a configuração.')
+        } else if (error.message.includes('Network')) {
+          speak('Problema de conexão. Verifique sua internet.')
+        } else {
+          speak('Desculpe, não foi possível descrever a página no momento.')
+        }
+      } else {
+        speak('Desculpe, ocorreu um erro inesperado.')
+      }
     } finally {
       setIsProcessing(false)
     }

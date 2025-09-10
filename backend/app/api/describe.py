@@ -1,36 +1,14 @@
 from fastapi import APIRouter, HTTPException
-from openai import OpenAI
 from PIL import Image
 import os
 import io
 import hashlib
 import base64
 from dotenv import load_dotenv
+from ..utils.openai_client import get_openai_client
 
 # Carrega chave do .env
 load_dotenv()
-
-# Inicializar cliente OpenAI de forma segura
-def get_openai_client():
-    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY não encontrada nas variáveis de ambiente")
-    
-    try:
-        # Tentar inicializar com configurações mínimas
-        return OpenAI(api_key=api_key)
-    except Exception as e:
-        logger.error(f"Erro ao inicializar cliente OpenAI: {e}")
-        # Fallback: tentar com configurações explícitas
-        try:
-            import httpx
-            return OpenAI(
-                api_key=api_key,
-                http_client=httpx.Client(timeout=30.0)
-            )
-        except Exception as e2:
-            logger.error(f"Erro no fallback OpenAI: {e2}")
-            raise HTTPException(status_code=500, detail="Erro ao inicializar cliente OpenAI")
 
 router = APIRouter(prefix="/describe", tags=["Descrição de Imagens"])
 
