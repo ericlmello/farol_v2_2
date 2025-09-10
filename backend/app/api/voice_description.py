@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, HttpUrl
-from playwright.async_api import async_playwright
 from PIL import Image
 import os
 import io
@@ -11,6 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import logging
 from ..utils.openai_client import get_openai_client
+from ..utils.playwright_manager import playwright_manager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -45,11 +45,13 @@ def aplicar_regras_fala(texto: str) -> str:
     return texto
 
 async def take_screenshot_async(url: str) -> str:
-    """Tira screenshot da página"""
+    """Tira screenshot da página usando gerenciador robusto do Playwright"""
     logger.info(f"Tirando screenshot da URL: {url}")
     try:
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
+        # Usar o gerenciador do Playwright
+        playwright, browser = await playwright_manager.get_browser()
+        
+        try:
             page = await browser.new_page()
 
             await page.set_viewport_size({"width": 1920, "height": 1080})
@@ -80,6 +82,10 @@ async def take_screenshot_async(url: str) -> str:
             
             logger.info(f"Screenshot salvo em: {file_path}")
             return str(file_name)
+            
+        finally:
+            await playwright.stop()
+            
     except Exception as e:
         logger.exception("Erro ao tirar screenshot")
         raise HTTPException(status_code=500, detail=f"Erro ao tirar screenshot: {str(e)}")

@@ -35,13 +35,26 @@ def main():
     if not run_command("python install_playwright.py", "Instalando browsers do Playwright"):
         print("⚠️  Aviso: Falha ao instalar browsers do Playwright, continuando...")
     
-    # 1.2. Inicializar gerenciador de arquivos
+    # 1.2. Inicializar gerenciadores
     try:
         from app.utils.file_manager import file_manager
+        from app.utils.playwright_manager import playwright_manager
+        
         file_manager.start_cleanup_scheduler()
         print("✅ Gerenciador de arquivos temporários iniciado")
+        
+        # Verificar se Playwright está funcionando
+        if playwright_manager.is_available():
+            print("✅ Playwright verificado e funcionando")
+        else:
+            print("⚠️  Aviso: Playwright não está disponível, tentando instalar...")
+            if playwright_manager.install_browsers():
+                print("✅ Playwright instalado com sucesso")
+            else:
+                print("⚠️  Aviso: Falha ao instalar Playwright, funcionalidade de screenshot pode não funcionar")
+                
     except Exception as e:
-        print(f"⚠️  Aviso: Falha ao iniciar gerenciador de arquivos: {e}")
+        print(f"⚠️  Aviso: Falha ao iniciar gerenciadores: {e}")
     
     # 2. Aguardar banco de dados estar disponível
     print("🔄 Aguardando banco de dados...")

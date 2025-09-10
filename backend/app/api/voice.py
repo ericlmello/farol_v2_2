@@ -7,6 +7,7 @@ import base64
 import logging
 from typing import Dict, Any
 from ..core.config import settings
+from ..utils.openai_client import get_openai_client
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -91,8 +92,8 @@ async def transcribe_audio(audio_file: UploadFile = File(...)):
         try:
             logger.info("Iniciando chamada para OpenAI Whisper API")
             
-            # Usar a nova API do OpenAI (v1.x)
-            client = openai.OpenAI(api_key=settings.openai_api_key)
+            # Usar o gerenciador robusto do OpenAI
+            client = get_openai_client()
             
             transcript = client.audio.transcriptions.create(
                 model="whisper-1",
@@ -225,8 +226,8 @@ async def interpret_intent(request: Dict[str, Any]):
         - Para comandos avançados, extraia todas as informações relevantes
         """
         
-        # Fazer a chamada para GPT-4o-mini usando nova API
-        client = openai.OpenAI(api_key=settings.openai_api_key)
+        # Fazer a chamada para GPT-4o-mini usando gerenciador robusto
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -295,8 +296,8 @@ async def describe_image(request: Dict[str, Any]):
                 detail="Imagem é obrigatória"
             )
         
-        # Fazer a chamada para GPT-4o-mini Vision usando nova API
-        client = openai.OpenAI(api_key=settings.openai_api_key)
+        # Fazer a chamada para GPT-4o-mini Vision usando gerenciador robusto
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -352,8 +353,8 @@ async def generate_speech(request: Dict[str, Any]):
                 detail="Texto é obrigatório"
             )
         
-        # Gerar áudio usando OpenAI TTS com nova API
-        client = openai.OpenAI(api_key=settings.openai_api_key)
+        # Gerar áudio usando OpenAI TTS com gerenciador robusto
+        client = get_openai_client()
         response = client.audio.speech.create(
             model="tts-1",
             voice="alloy",  # Voz neutra e clara
