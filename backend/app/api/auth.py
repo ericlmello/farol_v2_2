@@ -18,7 +18,7 @@ from ..core.config import settings
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 # Configuração OAuth2
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     """Autentica um usuário verificando email e senha"""

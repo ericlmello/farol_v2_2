@@ -4,7 +4,9 @@ import axios from 'axios'
 const getApiBaseUrl = () => {
   // Prioridade 1: Variável de ambiente NEXT_PUBLIC_API_URL (para produção)
   if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL
+    // Garantir que a URL tenha o prefixo /api/v1
+    const url = process.env.NEXT_PUBLIC_API_URL
+    return url.endsWith('/api/v1') ? url : `${url}/api/v1`
   }
   
   // Prioridade 2: Desenvolvimento local

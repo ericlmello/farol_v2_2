@@ -103,8 +103,12 @@ export default function SimulationStartPage() {
         focus_areas: config.focusAreas
       }
 
-      const result = await simulationsService.startSimulation(simulationConfig)
-      router.push(`/simulation/${result.id}`)
+      // Salvar configuração no localStorage
+      localStorage.setItem('simulationConfig', JSON.stringify(simulationConfig))
+      
+      // Redirecionar para a tela ativa com a configuração
+      const configParam = encodeURIComponent(JSON.stringify(simulationConfig))
+      router.push(`/simulation/active?config=${configParam}`)
     } catch (err: any) {
       console.error('Erro ao iniciar simulação:', err)
       setError(err.message || 'Erro ao iniciar simulação. Tente novamente.')

@@ -42,3 +42,4 @@ echo "   2. Conecte seu repositório GitHub"
 echo "   3. Configure as variáveis de ambiente"
 echo "   4. Aguarde o deploy completar"
 echo "   5. Teste as URLs acima"
+

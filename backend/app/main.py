@@ -12,6 +12,7 @@ from .api.simulation import router as simulation_router
 from .api.matches import router as matches_router
 from .api.interviews import router as interviews_router
 from .api.voice import router as voice_router
+from .api.interview_chatbot import router as interview_chatbot_router
 
 # 2º: Criação da instância principal
 app = FastAPI(
@@ -67,6 +68,7 @@ api_router.include_router(simulation_router, tags=["Simulations"])
 api_router.include_router(matches_router, tags=["Matches"])
 api_router.include_router(interviews_router, tags=["Interviews"])
 api_router.include_router(voice_router, prefix="/voice", tags=["Voice Assistant"])
+api_router.include_router(interview_chatbot_router, tags=["Interview Chatbot"])
 
 # 7º: Chamada final app.include_router
 app.include_router(api_router)
