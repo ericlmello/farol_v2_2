@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
-import openai
+import httpx
 import os
+import json
 from dotenv import load_dotenv
 
 from ..db.database import get_db
@@ -19,34 +20,39 @@ router = APIRouter(prefix="/interview-chatbot", tags=["interview-chatbot"])
 # Configuração da API da Perplexity
 API_KEY = os.getenv("PERPLEXITY_API_KEY")
 
-# Configurar o cliente OpenAI para usar a API da Perplexity
-def get_perplexity_client():
-    """Cria cliente OpenAI para Perplexity com tratamento de erro"""
+# Função para fazer chamadas diretas à API da Perplexity usando httpx
+async def call_perplexity_api(messages: List[dict], model: str = "sonar-pro") -> str:
+    """Faz chamada direta à API da Perplexity usando httpx"""
     if not API_KEY:
         raise ValueError("PERPLEXITY_API_KEY não configurada")
     
+    url = "https://api.perplexity.ai/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": 1000,
+        "temperature": 0.7
+    }
+    
     try:
-        # Tentar diferentes formas de inicializar o cliente
-        try:
-            # Método 1: Inicialização padrão
-            return openai.OpenAI(
-                api_key=API_KEY,
-                base_url="https://api.perplexity.ai"
-            )
-        except Exception as e1:
-            print(f"Erro método 1: {e1}")
-            try:
-                # Método 2: Sem base_url (fallback)
-                return openai.OpenAI(api_key=API_KEY)
-            except Exception as e2:
-                print(f"Erro método 2: {e2}")
-                # Método 3: Usar openai.api_key diretamente
-                import openai as openai_module
-                openai_module.api_key = API_KEY
-                return openai_module
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, headers=headers, json=payload, timeout=30.0)
+            response.raise_for_status()
+            
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
+            
+    except httpx.HTTPStatusError as e:
+        print(f"Erro HTTP na API Perplexity: {e.response.status_code} - {e.response.text}")
+        raise Exception(f"Erro na API Perplexity: {e.response.status_code}")
     except Exception as e:
-        print(f"Erro ao criar cliente Perplexity: {e}")
-        raise
+        print(f"Erro ao chamar API Perplexity: {e}")
+        raise Exception(f"Erro técnico: {str(e)}")
 
 def create_interview_prompt(config: SimulationConfig, user_profile: dict = None) -> str:
     """Cria um prompt personalizado baseado na configuração da simulação"""
@@ -138,7 +144,7 @@ Agora, inicie a entrevista com uma saudação calorosa e a primeira pergunta."""
 
     return prompt
 
-def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: dict = None, conversation_history: List[dict] = None) -> str:
+async def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: dict = None, conversation_history: List[dict] = None) -> str:
     """Função principal do chatbot de entrevista"""
     try:
         # Criar prompt base
@@ -158,31 +164,19 @@ def entrevista_bot(pergunta: str, config: SimulationConfig, user_profile: dict =
         # Adicionar pergunta atual
         messages.append({"role": "user", "content": pergunta})
         
-        client = get_perplexity_client()
-        
-        # Tentar diferentes formas de fazer a chamada
+        # Usar a nova função de chamada direta
         try:
-            response = client.chat.completions.create(
-                model="sonar-pro",  # Modelo mais atual da Perplexity
-                messages=messages,
-                max_tokens=1000,
-                temperature=0.7
-            )
+            response = await call_perplexity_api(messages, "sonar-pro")
+            return response
         except Exception as e:
             print(f"Erro na chamada da API: {e}")
             # Fallback: tentar com modelo diferente
             try:
-                response = client.chat.completions.create(
-                    model="llama-3.1-sonar-small-128k-online",
-                    messages=messages,
-                    max_tokens=1000,
-                    temperature=0.7
-                )
+                response = await call_perplexity_api(messages, "llama-3.1-sonar-small-128k-online")
+                return response
             except Exception as e2:
                 print(f"Erro no fallback: {e2}")
                 raise e2
-        
-        return response.choices[0].message.content
         
     except Exception as e:
         return f"Desculpe, ocorreu um erro técnico. Por favor, tente novamente. Erro: {str(e)}"
@@ -215,7 +209,7 @@ async def start_interview(
         system_prompt = create_interview_prompt(config, user_profile)
         
         # Gerar primeira pergunta
-        first_question = entrevista_bot(
+        first_question = await entrevista_bot(
             "Inicie a entrevista com uma saudação e a primeira pergunta.",
             config, 
             user_profile
@@ -278,7 +272,7 @@ async def chat_with_interviewer(
         }
         
         # Processar mensagem
-        response = entrevista_bot(
+        response = await entrevista_bot(
             user_message,
             config,
             user_profile,
@@ -349,7 +343,7 @@ async def end_interview(
         5. Próximos passos
         """
         
-        feedback = entrevista_bot(feedback_prompt, config, user_profile)
+        feedback = await entrevista_bot(feedback_prompt, config, user_profile)
         
         return {
             "session_id": session_id,
