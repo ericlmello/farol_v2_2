@@ -196,9 +196,16 @@ async def start_interview(
     """Inicia uma nova entrevista com o chatbot"""
     
     try:
-        # Buscar perfil do usuário (simulado por enquanto)
+        # Buscar perfil do usuário
+        user_name = current_user.email.split('@')[0]  # Usar email como fallback
+        if current_user.profile:
+            if current_user.profile.first_name and current_user.profile.last_name:
+                user_name = f"{current_user.profile.first_name} {current_user.profile.last_name}"
+            elif current_user.profile.first_name:
+                user_name = current_user.profile.first_name
+        
         user_profile = {
-            "name": current_user.name,
+            "name": user_name,
             "experience_level": "Intermediário",  # Em produção, viria do banco
             "main_area": "Desenvolvimento Full Stack",
             "skills": ["JavaScript", "Python", "React", "Node.js"]
@@ -256,8 +263,15 @@ async def chat_with_interviewer(
         config = SimulationConfig(**config_data)
         
         # Buscar perfil do usuário
+        user_name = current_user.email.split('@')[0]  # Usar email como fallback
+        if current_user.profile:
+            if current_user.profile.first_name and current_user.profile.last_name:
+                user_name = f"{current_user.profile.first_name} {current_user.profile.last_name}"
+            elif current_user.profile.first_name:
+                user_name = current_user.profile.first_name
+        
         user_profile = {
-            "name": current_user.name,
+            "name": user_name,
             "experience_level": "Intermediário",
             "main_area": "Desenvolvimento Full Stack", 
             "skills": ["JavaScript", "Python", "React", "Node.js"]
