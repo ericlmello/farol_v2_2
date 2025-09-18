@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
+
 interface MenuItem {
   name: string
   href: string
@@ -55,6 +56,15 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+        </svg>
+      )
+    },
+    {
+      name: 'Selo Empresa Inclusiva',
+      href: '/inclusive-company-seal',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.955a11.955 11.955 0 0118 0 12.02 12.02 0 00-2.382-8.971z" />
         </svg>
       )
     },
@@ -140,12 +150,12 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
           className="p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-foreground/20"
           aria-label={isCollapsed ? 'Expandir sidebar' : 'Recolher sidebar'}
         >
-          <svg 
+          <svg
             className={`w-5 h-5 text-primary-foreground transition-transform duration-200 ${
               isCollapsed ? 'rotate-180' : ''
-            }`} 
-            fill="none" 
-            stroke="currentColor" 
+            }`}
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -241,3 +251,4 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
     </div>
   )
 }
+
