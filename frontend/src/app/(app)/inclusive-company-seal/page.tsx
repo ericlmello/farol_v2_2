@@ -9,6 +9,7 @@ type Testimonial = {
   quote: string;
   author: string;
   role: 'Funcionário(a) Atual' | 'Ex-Funcionário(a)' | 'Candidato(a)';
+  avatarUrl: string;
 };
 type CompanyRanking = {
   rank: number;
@@ -25,8 +26,8 @@ const fakeRankingData: CompanyRanking[] = [
     seal: 'gold',
     score: 98,
     testimonials: [
-      { quote: 'O processo seletivo foi super humano e transparente. A InovaTech realmente se preocupa com a inclusão.', author: 'Maria S.', role: 'Candidato(a)'},
-      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Funcionário(a) Atual'},
+      { quote: 'O processo seletivo foi super humano e transparente. A InovaTech realmente se preocupa com a inclusão.', author: 'Maria S.', role: 'Candidato(a)', avatarUrl: 'https://placehold.co/100x100/E9D5FF/4C1D95?text=MS'},
+      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Funcionário(a) Atual', avatarUrl: 'https://placehold.co/100x100/A7F3D0/065F46?text=JP'},
     ]
   },
   {
@@ -35,7 +36,7 @@ const fakeRankingData: CompanyRanking[] = [
     seal: 'silver',
     score: 89,
     testimonials: [
-      { quote: 'A empresa ofereceu todo o suporte de acessibilidade que precisei durante a entrevista. Me senti muito acolhido.', author: 'Carlos P.', role: 'Funcionário(a) Atual'},
+      { quote: 'A empresa ofereceu todo o suporte de acessibilidade que precisei durante a entrevista. Me senti muito acolhido.', author: 'Carlos P.', role: 'Funcionário(a) Atual', avatarUrl: 'https://placehold.co/100x100/DBEAFE/1E40AF?text=CP'},
     ]
   },
   {
@@ -44,8 +45,8 @@ const fakeRankingData: CompanyRanking[] = [
     seal: 'bronze',
     score: 76,
     testimonials: [
-      { quote: 'A equipe de RH foi muito atenciosa. O desafio técnico foi relevante para a vaga e bem estruturado.', author: 'Juliano M.', role: 'Candidato(a)' },
-      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Ana L.', role: 'Ex-Funcionário(a)' },
+      { quote: 'A equipe de RH foi muito atenciosa. O desafio técnico foi relevante para a vaga e bem estruturado.', author: 'Juliano M.', role: 'Candidato(a)', avatarUrl: 'https://placehold.co/100x100/FEF3C7/92400E?text=JM' },
+      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Ana L.', role: 'Ex-Funcionário(a)', avatarUrl: 'https://placehold.co/100x100/FEE2E2/991B1B?text=AL' },
     ]
   }
 ];
@@ -95,10 +96,15 @@ const CompanyRankingCard = ({ company }: { company: CompanyRanking }) => {
                      {company.testimonials.length > 0 ? (
                          <div className="space-y-4">
                              {company.testimonials.map((testimonial, index) => (
-                                 <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                     <p className="text-gray-600 italic">"{testimonial.quote}"</p>
-                                     <div className="text-right mt-2 text-sm font-semibold text-gray-800">- {testimonial.author}</div>
-                                     <div className="text-right text-xs text-gray-500">{testimonial.role}</div>
+                                 <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm flex items-start space-x-4">
+                                     <img src={testimonial.avatarUrl} alt={`Foto de ${testimonial.author}`} className="w-12 h-12 rounded-full flex-shrink-0" />
+                                     <div className="flex-1">
+                                         <p className="text-gray-600 italic">"{testimonial.quote}"</p>
+                                         <div className="text-right mt-2">
+                                             <div className="text-sm font-semibold text-gray-800">- {testimonial.author}</div>
+                                             <div className="text-xs text-gray-500">{testimonial.role}</div>
+                                         </div>
+                                     </div>
                                  </div>
                              ))}
                          </div>
@@ -347,4 +353,3 @@ export default function InclusiveCompanySealPage() {
     </div>
   )
 }
-
