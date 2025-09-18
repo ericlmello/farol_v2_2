@@ -1,7 +1,117 @@
 'use client'
 
 import { useState } from 'react'
-import { Award, Building, MessageSquare, ShieldCheck, ThumbsUp, User, Users } from 'lucide-react'
+import { Award, Building, MessageSquare, ShieldCheck, ThumbsUp, User, Users, ChevronDown, TrendingUp } from 'lucide-react'
+
+// --- DADOS E TIPOS PARA A NOVA SEÇÃO DE RANKING ---
+type SealType = 'gold' | 'silver' | 'bronze';
+type Testimonial = {
+  quote: string;
+  author: string;
+  role: 'Funcionário(a) Atual' | 'Ex-Funcionário(a)' | 'Candidato(a)';
+};
+type CompanyRanking = {
+  rank: number;
+  name: string;
+  seal: SealType;
+  score: number;
+  testimonials: Testimonial[];
+};
+
+const fakeRankingData: CompanyRanking[] = [
+  {
+    rank: 1,
+    name: 'InovaTech Soluções',
+    seal: 'gold',
+    score: 98,
+    testimonials: [
+      { quote: 'O processo seletivo foi super humano e transparente. A InovaTech realmente se preocupa com a inclusão.', author: 'Maria S.', role: 'Candidato(a)'},
+      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Funcionário(a) Atual'},
+    ]
+  },
+  {
+    rank: 2,
+    name: 'DataMax Analytics',
+    seal: 'silver',
+    score: 89,
+    testimonials: [
+      { quote: 'A empresa ofereceu todo o suporte de acessibilidade que precisei durante a entrevista. Me senti muito acolhido.', author: 'Carlos P.', role: 'Funcionário(a) Atual'},
+    ]
+  },
+  {
+    rank: 3,
+    name: 'CriaDesign Studio',
+    seal: 'bronze',
+    score: 76,
+    testimonials: [
+      { quote: 'A equipe de RH foi muito atenciosa. O desafio técnico foi relevante para a vaga e bem estruturado.', author: 'Juliano M.', role: 'Candidato(a)' },
+      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Ana L.', role: 'Ex-Funcionário(a)' },
+    ]
+  }
+];
+// --- FIM DOS DADOS E TIPOS ---
+
+
+// --- COMPONENTE PARA O CARD DE RANKING ---
+const CompanyRankingCard = ({ company }: { company: CompanyRanking }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    
+    const sealConfig = {
+        gold: { text: 'Ouro', iconColor: 'text-yellow-500', bgColor: 'bg-yellow-100', borderColor: 'border-yellow-400' },
+        silver: { text: 'Prata', iconColor: 'text-gray-500', bgColor: 'bg-gray-200', borderColor: 'border-gray-400' },
+        bronze: { text: 'Bronze', iconColor: 'text-amber-600', bgColor: 'bg-amber-100', borderColor: 'border-amber-500' },
+    };
+
+    const config = sealConfig[company.seal];
+
+    return (
+        <div className={`bg-white rounded-lg shadow-sm border ${isExpanded ? config.borderColor : 'border-gray-200'} transition-all duration-300`}>
+            <div className="p-4 flex flex-col sm:flex-row items-center justify-between cursor-pointer hover:bg-gray-50" onClick={() => setIsExpanded(!isExpanded)}>
+                <div className="flex items-center mb-4 sm:mb-0">
+                    <span className="text-2xl font-bold text-gray-400 w-10">{company.rank}º</span>
+                    <div className="ml-4">
+                        <h4 className="font-bold text-lg text-gray-800">{company.name}</h4>
+                        <div className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${config.bgColor} text-gray-800`}>
+                             <Award className={`-ml-0.5 mr-1.5 h-4 w-4 ${config.iconColor}`} />
+                             Selo {config.text}
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center">
+                     <div className="text-center mx-4">
+                        <span className="font-bold text-2xl text-indigo-600">{company.score}</span>
+                        <span className="text-xs block text-gray-500">Pontos</span>
+                    </div>
+                    <ChevronDown className={`w-6 h-6 text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                </div>
+            </div>
+
+            {isExpanded && (
+                <div className="p-6 bg-gray-50/70 border-t border-gray-200">
+                    <h5 className="flex items-center text-md font-semibold text-gray-800 mb-4">
+                        <MessageSquare className="h-5 w-5 mr-2 text-indigo-500" />
+                        O que a comunidade diz
+                    </h5>
+                     {company.testimonials.length > 0 ? (
+                         <div className="space-y-4">
+                             {company.testimonials.map((testimonial, index) => (
+                                 <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                     <p className="text-gray-600 italic">"{testimonial.quote}"</p>
+                                     <div className="text-right mt-2 text-sm font-semibold text-gray-800">- {testimonial.author}</div>
+                                     <div className="text-right text-xs text-gray-500">{testimonial.role}</div>
+                                 </div>
+                             ))}
+                         </div>
+                     ) : (
+                         <p className="text-sm text-gray-500 text-center py-4">Ainda não há depoimentos para esta empresa.</p>
+                     )}
+                </div>
+            )}
+        </div>
+    )
+}
+// --- FIM DO COMPONENTE ---
+
 
 // Componente de Card para os Níveis do Selo
 const SealLevelCard = ({ icon, title, description, color }: { icon: React.ReactNode, title: string, description: string, color: string }) => (
@@ -128,6 +238,23 @@ export default function InclusiveCompanySealPage() {
             </div>
         </div>
 
+        {/* NOVA SEÇÃO: Ranking e Voz da Comunidade */}
+        <div className="mb-20">
+             <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-gray-800">Ranking e Voz da Comunidade</h2>
+                <p className="mt-3 max-w-2xl mx-auto text-lg text-gray-500">
+                    Veja o desempenho das empresas e o que os talentos com deficiência estão falando sobre elas.
+                </p>
+            </div>
+            <div className="space-y-4">
+                {fakeRankingData.map(company => (
+                    <CompanyRankingCard key={company.rank} company={company} />
+                ))}
+            </div>
+        </div>
+        {/* FIM DA NOVA SEÇÃO */}
+
+
         {/* Formulário de Depoimento */}
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
           <h2 className="text-3xl font-bold text-center text-gray-800">Faça a Diferença: Envie seu Depoimento</h2>
@@ -220,3 +347,4 @@ export default function InclusiveCompanySealPage() {
     </div>
   )
 }
+
