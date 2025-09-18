@@ -37,14 +37,14 @@ export default function Home() {
             {/* Botões */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
               <Link href="/register">
-                <RainbowButton className="text-lg px-8 py-6">
+                <button className="bg-white text-gray-900 border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-lg px-8 py-6 transition-colors duration-200">
                   Criar Conta Gratuitamente
-                </RainbowButton>
+                </button>
               </Link>
               <Link href="/login">
-                <RainbowButton className="text-lg px-8 py-6">
-                  Já tenho conta
-                </RainbowButton>
+                <button className="bg-white text-gray-900 border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-lg px-8 py-6 transition-colors duration-200">
+                 Já tenho conta
+                </button>
               </Link>
             </div>
             
