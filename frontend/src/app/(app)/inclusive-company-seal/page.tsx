@@ -26,8 +26,8 @@ const fakeRankingData: CompanyRanking[] = [
     seal: 'gold',
     score: 98,
     testimonials: [
-      { quote: 'O processo seletivo foi super humano e transparente. A InovaTech realmente se preocupa com a inclusão.', author: 'Maria S.', role: 'Candidato(a)', avatarUrl: 'https://placehold.co/100x100/E9D5FF/4C1D95?text=MS'},
-      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Funcionário(a) Atual', avatarUrl: 'https://placehold.co/100x100/A7F3D0/065F46?text=JP'},
+      { quote: 'O processo seletivo foi super humano e transparente. A InovaTech realmente se preocupa com a inclusão.', author: 'Maria S.', role: 'Candidato(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%234f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23e0e7ff" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
+      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Funcionário(a) Atual', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23065f46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23d1fae5" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
     ]
   },
   {
@@ -36,7 +36,7 @@ const fakeRankingData: CompanyRanking[] = [
     seal: 'silver',
     score: 89,
     testimonials: [
-      { quote: 'A empresa ofereceu todo o suporte de acessibilidade que precisei durante a entrevista. Me senti muito acolhido.', author: 'Carlos P.', role: 'Funcionário(a) Atual', avatarUrl: 'https://placehold.co/100x100/DBEAFE/1E40AF?text=CP'},
+      { quote: 'A empresa ofereceu todo o suporte de acessibilidade que precisei durante a entrevista. Me senti muito acolhido.', author: 'Carlos P.', role: 'Funcionário(a) Atual', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%231e40af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23dbeafe" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
     ]
   },
   {
@@ -45,8 +45,8 @@ const fakeRankingData: CompanyRanking[] = [
     seal: 'bronze',
     score: 76,
     testimonials: [
-      { quote: 'A equipe de RH foi muito atenciosa. O desafio técnico foi relevante para a vaga e bem estruturado.', author: 'Juliano M.', role: 'Candidato(a)', avatarUrl: 'https://placehold.co/100x100/FEF3C7/92400E?text=JM' },
-      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Ana L.', role: 'Ex-Funcionário(a)', avatarUrl: 'https://placehold.co/100x100/FEE2E2/991B1B?text=AL' },
+      { quote: 'A equipe de RH foi muito atenciosa. O desafio técnico foi relevante para a vaga e bem estruturado.', author: 'Juliano M.', role: 'Candidato(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2392400e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23fef3c7" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>` },
+      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Ana L.', role: 'Ex-Funcionário(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23991b1b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23fee2e2" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>` },
     ]
   }
 ];
@@ -97,7 +97,7 @@ const CompanyRankingCard = ({ company }: { company: CompanyRanking }) => {
                          <div className="space-y-4">
                              {company.testimonials.map((testimonial, index) => (
                                  <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm flex items-start space-x-4">
-                                     <img src={testimonial.avatarUrl} alt={`Foto de ${testimonial.author}`} className="w-12 h-12 rounded-full flex-shrink-0" />
+                                     <img src={testimonial.avatarUrl} alt={`Avatar de ${testimonial.author}`} className="w-12 h-12 rounded-full flex-shrink-0 bg-gray-100 p-1" />
                                      <div className="flex-1">
                                          <p className="text-gray-600 italic">"{testimonial.quote}"</p>
                                          <div className="text-right mt-2">
@@ -120,14 +120,14 @@ const CompanyRankingCard = ({ company }: { company: CompanyRanking }) => {
 
 
 // Componente de Card para os Níveis do Selo
-const SealLevelCard = ({ icon, title, description, color }: { icon: React.ReactNode, title: string, description: string, color: string }) => (
+const SealLevelCard = ({ icon, title, description, color }: { icon: React.ReactNode, title: string, description: React.ReactNode, color: string }) => (
   <div className="bg-white rounded-xl shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
     <div className={`p-6 border-l-4 ${color}`}>
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex-shrink-0">{icon}</div>
         <h3 className="text-xl font-bold text-gray-800">{title}</h3>
       </div>
-      <p className="text-gray-600">{description}</p>
+      <div className="text-gray-600">{description}</div>
     </div>
   </div>
 )
@@ -205,7 +205,7 @@ export default function InclusiveCompanySealPage() {
                 <SealLevelCard
                     icon={<Award className="h-8 w-8 text-yellow-500" />}
                     title="Ouro"
-                    description="O mais alto nível de reconhecimento para empresas-referência em inclusão. Como benefício, recebem consultoria para criar planos de carreira e de negócios focados em talentos com deficiência."
+                    description={<>O mais alto nível de reconhecimento para empresas-referência em inclusão. Como benefício, recebem <strong>consultoria para criar planos de carreira e de negócios focados em talentos com deficiência.</strong></>}
                     color="border-yellow-500"
                 />
             </div>
@@ -353,4 +353,3 @@ export default function InclusiveCompanySealPage() {
     </div>
   )
 }
-
