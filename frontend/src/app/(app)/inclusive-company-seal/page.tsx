@@ -205,7 +205,7 @@ export default function InclusiveCompanySealPage() {
                 <SealLevelCard
                     icon={<Award className="h-8 w-8 text-yellow-500" />}
                     title="Ouro"
-                    description="O mais alto nível de reconhecimento, para empresas que são referência em inclusão, com liderança diversa e impacto positivo validado pela comunidade."
+                    description="O mais alto nível de reconhecimento para empresas-referência em inclusão. Como benefício, recebem consultoria para criar planos de carreira e de negócios focados em talentos com deficiência."
                     color="border-yellow-500"
                 />
             </div>
@@ -353,3 +353,4 @@ export default function InclusiveCompanySealPage() {
     </div>
   )
 }
+
