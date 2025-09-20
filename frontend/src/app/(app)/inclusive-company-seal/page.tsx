@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Award, Building, MessageSquare, ShieldCheck, ThumbsUp, User, Users, ChevronDown, TrendingUp } from 'lucide-react'
+import { Award, Building, MessageSquare, ShieldCheck, ThumbsUp, User, Users, ChevronDown, TrendingUp, Star } from 'lucide-react'
 
 // --- DADOS E TIPOS PARA A NOVA SEÇÃO DE RANKING ---
 type SealType = 'gold' | 'silver' | 'bronze';
 type Testimonial = {
   quote: string;
   author: string;
-  role: 'Funcionário(a) Atual' | 'Ex-Funcionário(a)' | 'Candidato(a)';
+  role: 'Funcionário(a) Atual' | 'Ex-Funcionário(a)' | 'Candidato(a)' | 'Super usuário';
   avatarUrl: string;
 };
 type CompanyRanking = {
@@ -27,7 +27,7 @@ const fakeRankingData: CompanyRanking[] = [
     score: 98,
     testimonials: [
       { quote: 'O processo seletivo foi super humano e transparente. A InovaTech realmente se preocupa com a inclusão.', author: 'Maria S.', role: 'Candidato(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%234f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23e0e7ff" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
-      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Funcionário(a) Atual', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23065f46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23d1fae5" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
+      { quote: 'Ambiente de trabalho excelente, com plano de carreira claro para todos.', author: 'João P.', role: 'Super usuário', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23065f46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23d1fae5" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
     ]
   },
   {
@@ -37,6 +37,7 @@ const fakeRankingData: CompanyRanking[] = [
     score: 89,
     testimonials: [
       { quote: 'A empresa ofereceu todo o suporte de acessibilidade que precisei durante a entrevista. Me senti muito acolhido.', author: 'Carlos P.', role: 'Funcionário(a) Atual', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%231e40af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23dbeafe" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
+      { quote: 'O processo de feedback após a entrevista poderia ser mais claro, mas a equipe foi muito respeitosa.', author: 'Anônimo', role: 'Candidato(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%234b5563" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23e5e7eb" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>`},
     ]
   },
   {
@@ -46,7 +47,7 @@ const fakeRankingData: CompanyRanking[] = [
     score: 76,
     testimonials: [
       { quote: 'A equipe de RH foi muito atenciosa. O desafio técnico foi relevante para a vaga e bem estruturado.', author: 'Juliano M.', role: 'Candidato(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2392400e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23fef3c7" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>` },
-      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Ana L.', role: 'Ex-Funcionário(a)', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23991b1b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23fee2e2" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>` },
+      { quote: 'É um bom lugar para começar, mas sinto que o plano de carreira para PCDs poderia ser mais claro.', author: 'Anônimo', role: 'Super usuário', avatarUrl: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23991b1b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" fill="%23fee2e2" /><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>` },
     ]
   }
 ];
@@ -102,7 +103,10 @@ const CompanyRankingCard = ({ company }: { company: CompanyRanking }) => {
                                          <p className="text-gray-600 italic">"{testimonial.quote}"</p>
                                          <div className="text-right mt-2">
                                              <div className="text-sm font-semibold text-gray-800">- {testimonial.author}</div>
-                                             <div className="text-xs text-gray-500">{testimonial.role}</div>
+                                             <div className="text-xs text-gray-500 flex items-center justify-end">
+                                                {testimonial.role === 'Super usuário' && <Star className="w-3.5 h-3.5 text-yellow-500 mr-1" fill="currentColor" />}
+                                                {testimonial.role}
+                                             </div>
                                          </div>
                                      </div>
                                  </div>
@@ -181,8 +185,8 @@ export default function InclusiveCompanySealPage() {
           <h1 className="mt-4 text-4xl font-extrabold text-gray-900 sm:text-5xl">
             Selo Empresa Inclusiva
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
-            Reconhecemos e celebramos as empresas que constroem um futuro de trabalho mais justo e acessível para todos.
+          <p className="mt-4 max-w-3xl mx-auto text-xl text-gray-500">
+            Promovemos a <strong>transparência</strong> e celebramos as empresas que constroem um futuro de trabalho mais justo e acessível para todos.
           </p>
         </div>
 
@@ -213,7 +217,7 @@ export default function InclusiveCompanySealPage() {
 
         {/* Critérios de Avaliação */}
         <div className="mb-20">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">Como Obter o Selo?</h2>
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">Como Construímos um Processo Transparente?</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <CriteriaCard icon={<Building size={24} />} title="Estrutura e Acessibilidade">
                     <p>Avaliamos a acessibilidade física e digital da empresa, garantindo que os ambientes e ferramentas de trabalho sejam utilizáveis por todos.</p>
@@ -225,12 +229,12 @@ export default function InclusiveCompanySealPage() {
                         <li><strong>Plano de Carreira:</strong> Existência e aplicação de um plano de desenvolvimento profissional claro e equitativo para colaboradores com deficiência.</li>
                     </ul>
                 </CriteriaCard>
-                <CriteriaCard icon={<ThumbsUp size={24} />} title="Vozes da Comunidade">
-                    <p>A percepção da comunidade é fundamental. O selo é diretamente influenciado por avaliações e depoimentos de:</p>
+                <CriteriaCard icon={<ThumbsUp size={24} />} title="Vozes da Comunidade: A Prova Real">
+                    <p>A percepção da comunidade é fundamental. O selo é diretamente influenciado por avaliações e depoimentos que validam a transparência do processo seletivo e a cultura da empresa:</p>
                      <ul className="list-disc pl-5">
                         <li>Funcionários e ex-funcionários com deficiência.</li>
                         <li>Candidatos com deficiência que participaram de processos seletivos.</li>
-                    </ul>
+                     </ul>
                 </CriteriaCard>
                  <div className="bg-indigo-50 p-6 rounded-lg shadow-sm flex items-center">
                     <div className="flex-shrink-0 text-indigo-500 mr-4">
@@ -238,7 +242,7 @@ export default function InclusiveCompanySealPage() {
                     </div>
                     <div>
                         <h4 className="text-lg font-semibold text-gray-900">A Importância dos Depoimentos</h4>
-                        <p className="mt-2 text-gray-600">As experiências vividas são o termômetro mais fiel da cultura de uma empresa. Por isso, os depoimentos têm um peso significativo em nossa avaliação.</p>
+                        <p className="mt-2 text-gray-600">As experiências vividas são o termômetro mais fiel da cultura e <strong>transparência</strong> de uma empresa. Por isso, os depoimentos têm um peso significativo em nossa avaliação.</p>
                     </div>
                 </div>
             </div>
@@ -247,9 +251,9 @@ export default function InclusiveCompanySealPage() {
         {/* NOVA SEÇÃO: Ranking e Voz da Comunidade */}
         <div className="mb-20">
              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-800">Ranking e Voz da Comunidade</h2>
+                <h2 className="text-3xl font-bold text-gray-800">Ranking de Transparência e Inclusão</h2>
                 <p className="mt-3 max-w-2xl mx-auto text-lg text-gray-500">
-                    Veja o desempenho das empresas e o que os talentos com deficiência estão falando sobre elas.
+                    Veja o desempenho das empresas e o que os talentos com deficiência estão falando sobre a transparência de seus processos seletivos.
                 </p>
             </div>
             <div className="space-y-4">
@@ -263,7 +267,7 @@ export default function InclusiveCompanySealPage() {
 
         {/* Formulário de Depoimento */}
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-          <h2 className="text-3xl font-bold text-center text-gray-800">Faça a Diferença: Envie seu Depoimento</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-800">Faça a Diferença com sua Voz</h2>
           <p className="mt-3 text-center text-gray-600 max-w-xl mx-auto">
             Sua experiência ajuda a construir um mercado de trabalho mais transparente e inclusivo. Compartilhe sua vivência em uma empresa.
           </p>
@@ -353,3 +357,4 @@ export default function InclusiveCompanySealPage() {
     </div>
   )
 }
+
