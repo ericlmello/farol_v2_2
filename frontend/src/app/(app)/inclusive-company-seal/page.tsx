@@ -1,7 +1,8 @@
 'use client'
 
+
 import { useState } from 'react'
-import { Award, Building, MessageSquare, ShieldCheck, ThumbsUp, User, Users, ChevronDown, TrendingUp, Star } from 'lucide-react'
+import { Award, Building, MessageSquare, ShieldCheck, ThumbsUp, User, Users, ChevronDown, TrendingUp, Star, Rocket } from 'lucide-react'
 
 // --- DADOS E TIPOS PARA A NOVA SEÇÃO DE RANKING ---
 type SealType = 'gold' | 'silver' | 'bronze';
@@ -124,15 +125,21 @@ const CompanyRankingCard = ({ company }: { company: CompanyRanking }) => {
 
 
 // Componente de Card para os Níveis do Selo
-const SealLevelCard = ({ icon, title, description, color }: { icon: React.ReactNode, title: string, description: React.ReactNode, color: string }) => (
-  <div className="bg-white rounded-xl shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-    <div className={`p-6 border-l-4 ${color}`}>
+const SealLevelCard = ({ icon, title, description, color, benefits }: { icon: React.ReactNode, title: string, description: React.ReactNode, color: string, benefits?: React.ReactNode }) => (
+  <div className="bg-white rounded-xl shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+    <div className={`p-6 border-l-4 ${color} flex-grow`}>
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex-shrink-0">{icon}</div>
         <h3 className="text-xl font-bold text-gray-800">{title}</h3>
       </div>
       <div className="text-gray-600">{description}</div>
     </div>
+    {benefits && (
+        <div className="bg-gray-50 p-4 border-t">
+            <h4 className="font-bold text-sm text-gray-800 mb-2">Benefícios Exclusivos:</h4>
+            <div className="text-gray-700 text-sm space-y-2">{benefits}</div>
+        </div>
+    )}
   </div>
 )
 
@@ -190,15 +197,26 @@ export default function InclusiveCompanySealPage() {
           </p>
         </div>
 
+        {/* Seção Missão */}
+        <div className="mb-20 bg-white p-8 rounded-lg shadow-md">
+            <div className="text-center">
+                 <Rocket className="mx-auto h-10 w-10 text-indigo-600" />
+                <h2 className="text-3xl font-bold text-gray-800 mt-4">Nossa Missão</h2>
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-600 italic">
+                  "Transformar inclusão em vantagem competitiva, conectando empresas a talentos com deficiência em busca de uma oportunidade."
+                </p>
+            </div>
+        </div>
+
         {/* Níveis do Selo */}
         <div className="mb-20">
             <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">Nossos Selos de Reconhecimento</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <SealLevelCard
-                    icon={<Award className="h-8 w-8 text-yellow-700" />}
+                    icon={<Award className="h-8 w-8 text-amber-700" />}
                     title="Bronze"
                     description="Para empresas que iniciaram sua jornada na inclusão, cumprindo os requisitos fundamentais de acessibilidade e representatividade."
-                    color="border-yellow-700"
+                    color="border-amber-700"
                 />
                 <SealLevelCard
                     icon={<Award className="h-8 w-8 text-gray-500" />}
@@ -209,8 +227,15 @@ export default function InclusiveCompanySealPage() {
                 <SealLevelCard
                     icon={<Award className="h-8 w-8 text-yellow-500" />}
                     title="Ouro"
-                    description={<>O mais alto nível de reconhecimento para empresas-referência. Como benefício, recebem <strong>consultoria, criação de planos de carreira e o acompanhamento pós-seleção,</strong> garantindo a evolução contínua do profissional contratado.</>}
+                    description="O mais alto nível de reconhecimento para empresas que são referência em inclusão e transparência."
                     color="border-yellow-500"
+                    benefits={
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li><strong>Consultoria</strong> para criar planos de carreira e de negócios focados em talentos com deficiência.</li>
+                            <li><strong>Acompanhamento pós-seleção</strong> para garantir a evolução contínua do profissional contratado.</li>
+                            <li><strong>Parceria estratégica</strong> com empresas de desenvolvimento de tecnologias assistivas, reduzindo seus custos.</li>
+                        </ul>
+                    }
                 />
             </div>
         </div>
@@ -357,3 +382,5 @@ export default function InclusiveCompanySealPage() {
     </div>
   )
 }
+
+
