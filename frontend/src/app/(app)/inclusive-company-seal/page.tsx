@@ -234,6 +234,7 @@ export default function InclusiveCompanySealPage() {
                             <li><strong>Consultoria com Especialistas</strong> para criar planos de carreira e de negócios focados em talentos com deficiência.</li>
                             <li><strong>Acompanhamento pós-seleção</strong> para garantir a evolução contínua do profissional contratado.</li>
                             <li><strong>Parceria estratégica</strong> com empresas de desenvolvimento de tecnologias assistivas, reduzindo seus custos.</li>
+                            <li><strong>Suporte humanizado</strong> Para acompanhamento do empregado em sua carreira.</li
                         </ul>
                     }
                 />
