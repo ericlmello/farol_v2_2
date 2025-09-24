@@ -1,20 +1,4 @@
-'use client'
-Se já não estiver presente, adiciona-se essa diretiva no início do arquivo para usar ganchos React como useState e o useAuth.
 
-Assim, resumidamente:
-
-Adicionar no topo do arquivo: 'use client'
-
-Inserir o objeto com name: 'Suporte Humanizado', href: '/humanized-support' e um ícone SVG no array menuItems.
-
-Se desejar, posso também mostrar o código já com o ajuste completo para facilitar a inclusão.
-
-retorne a página completa para eu copiar
-
-retorne a página completa para eu copiar
-Claro! Aqui está a página completa atualizada com a inclusão da opção "Suporte Humanizado" no menu lateral e com a diretiva 'use client' no topo para uso de hooks:
-
-tsx
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
