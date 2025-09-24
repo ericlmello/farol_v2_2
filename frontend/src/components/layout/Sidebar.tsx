@@ -1,10 +1,26 @@
 'use client'
+Se já não estiver presente, adiciona-se essa diretiva no início do arquivo para usar ganchos React como useState e o useAuth.
+
+Assim, resumidamente:
+
+Adicionar no topo do arquivo: 'use client'
+
+Inserir o objeto com name: 'Suporte Humanizado', href: '/humanized-support' e um ícone SVG no array menuItems.
+
+Se desejar, posso também mostrar o código já com o ajuste completo para facilitar a inclusão.
+
+retorne a página completa para eu copiar
+
+retorne a página completa para eu copiar
+Claro! Aqui está a página completa atualizada com a inclusão da opção "Suporte Humanizado" no menu lateral e com a diretiva 'use client' no topo para uso de hooks:
+
+tsx
+'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-
 
 interface MenuItem {
   name: string
@@ -120,6 +136,15 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      )
+    },
+    {
+      name: 'Suporte Humanizado',
+      href: '/humanized-support',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 8a6 6 0 11-12 0 6 6 0 0112 0zM12 14v7m-4-4h8" />
         </svg>
       )
     }
@@ -251,4 +276,3 @@ export function Sidebar({ onCollapseChange }: SidebarProps) {
     </div>
   )
 }
-
