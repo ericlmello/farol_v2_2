@@ -96,12 +96,16 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Card 2 - Inclusivo */}
+                {/* Card 2 - Suporte */}
+                
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    {/* Círculo de fundo alterado para amarelo */}
+                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                      {/* Ícone de atendente e cor do ícone alterada */}
+                      <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 14h3a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h3" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 12a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3z" />
                       </svg>
                     </div>
                     <div>
