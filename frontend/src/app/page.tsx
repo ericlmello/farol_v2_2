@@ -75,7 +75,7 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-foreground">IA por Voz</p>
+                      <p className="text-sm font-medium text-primary-foreground">Simulação de Entrevista por Voz</p>
                       <p className="text-xs text-primary-foreground/70">Navegação acessível</p>
                     </div>
                   </div>
@@ -105,8 +105,8 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-foreground">Inclusivo</p>
-                      <p className="text-xs text-primary-foreground/70">Para todos</p>
+                      <p className="text-sm font-medium text-primary-foreground">"Suporte Humanizado</p>
+                      <p className="text-xs text-primary-foreground/70">Com Profissionais Especialistas</p>
                     </div>
                   </div>
                 </div>
@@ -120,8 +120,8 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-foreground">Inclusivo</p>
-                      <p className="text-xs text-primary-foreground/70">Para todos</p>
+                      <p className="text-sm font-medium text-primary-foreground">Ranking de Transparência e Inclusão</p>
+                      <p className="text-xs text-primary-foreground/70">Avaliação da Comunidade</p>
                     </div>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-foreground">IA + Acessibilidade</p>
+                      <p className="text-sm font-medium text-primary-foreground">Capacitação Contínua</p>
                       <p className="text-xs text-primary-foreground/70">Tecnologia inclusiva</p>
                     </div>
                   </div>
