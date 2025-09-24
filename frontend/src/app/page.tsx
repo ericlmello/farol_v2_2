@@ -105,7 +105,7 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-foreground">"Suporte Humanizado</p>
+                      <p className="text-sm font-medium text-primary-foreground">Suporte Humanizado</p>
                       <p className="text-xs text-primary-foreground/70">Com Profissionais Especialistas</p>
                     </div>
                   </div>
