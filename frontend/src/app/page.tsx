@@ -30,7 +30,7 @@ export default function Home() {
             
             <p className="text-xl text-primary-foreground/90 leading-relaxed max-w-3xl mx-auto mb-12">
               A primeira plataforma de empregabilidade 100% acessível do Brasil, que utiliza 
-              Inteligência Artificial para conectar talentos com deficiência (PCD) às melhores 
+              Inteligência Artificial para conectar pessoas com deficiência (PCD) às melhores 
               oportunidades de trabalho.
             </p>
             
@@ -81,6 +81,36 @@ export default function Home() {
                   </div>
                 </div>
                 
+                {/* Card 3 - Inclusivo */}
+                <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-primary-foreground">Inclusivo</p>
+                      <p className="text-xs text-primary-foreground/70">Para todos</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card 3 - Inclusivo */}
+                <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-primary-foreground">Inclusivo</p>
+                      <p className="text-xs text-primary-foreground/70">Para todos</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Card 3 - Inclusivo */}
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
