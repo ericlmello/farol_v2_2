@@ -115,12 +115,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Card 3 - Inclusivo */}
+                {/* Card 3 - Ranking */}
+                
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    {/* Círculo de fundo alterado para vermelho */}
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                      {/* Ícone de pódio e cor alterada */}
+                      <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 18v-6m-4 6V8m-4 10V4" />
                       </svg>
                     </div>
                     <div>
@@ -130,15 +133,15 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Card 4 - IA + Acessibilidade */}
+                {/* Card 4 - Capacitação */}
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                       </svg>
                     </div>
-                    <div>
+                  <div>
                       <p className="text-sm font-medium text-primary-foreground">Capacitação Contínua</p>
                       <p className="text-xs text-primary-foreground/70">Tecnologia inclusiva</p>
                     </div>
@@ -148,6 +151,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+        
       </section>
 
       {/* Seção 2: Nossa Solução */}
