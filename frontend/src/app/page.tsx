@@ -51,7 +51,7 @@ export default function Home() {
             {/* Elementos Flutuantes */}
             <div className="relative">
               <div className="flex flex-wrap justify-center gap-4">
-                {/* Card 1 - Busca Inteligente */}
+                {/* Card - Busca Inteligente */}
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-success/20 rounded-full flex items-center justify-center">
@@ -60,13 +60,13 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-primary-foreground">Busca Inteligente</p>
-                      <p className="text-xs text-primary-foreground/70">Compatibilidade IA</p>
+                      <p className="text-sm font-medium text-primary-foreground">Busca Inteligente de Vagas</p>
+                      <p className="text-xs text-primary-foreground/70">Compatibilidade com IA</p>
                     </div>
                   </div>
                 </div>
                 
-                {/* Card 2 - IA por Voz */}
+                {/* Card 0 - IA por Voz */}
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-info/20 rounded-full flex items-center justify-center">
@@ -81,7 +81,7 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Card 3 - Inclusivo */}
+                {/* Card 1 - Inclusivo */}
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
@@ -96,7 +96,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Card 3 - Inclusivo */}
+                {/* Card 2 - Inclusivo */}
                 <div className="bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 rounded-2xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
